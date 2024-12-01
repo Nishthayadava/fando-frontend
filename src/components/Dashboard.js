@@ -252,7 +252,7 @@ const Event = ({ event }) => {
                             </tr>
                             <tr>
                                 <th>Working Hour</th>
-                                <td>{selectedEvent.total_working_time}</td>
+                                <td>{(selectedEvent.total_working_time)/60}</td>
                             </tr>
                         </tbody>
                     </table>
