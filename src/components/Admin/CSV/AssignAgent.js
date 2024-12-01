@@ -36,7 +36,7 @@ function AssignAgent({ token }) {
         },
       })
       .then((response) => {
-        const agentData = response.data.filter(user => user.role === 'Agent');
+        const agentData = response.data.filter(user => user.role.trim() === 'Agent');
         setAgents(agentData);
       })
       .catch((error) => {
