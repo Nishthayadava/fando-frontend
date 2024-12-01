@@ -375,6 +375,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Navigate to="/login" />} />
             <Route path="/login" element={<Login />} />
+            <Route path="*" element={<div>Error Page 404  Not found</div>} />
 
             <Route
               path="/dashboard"
