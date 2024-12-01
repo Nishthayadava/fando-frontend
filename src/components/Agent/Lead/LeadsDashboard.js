@@ -43,8 +43,8 @@ function LeadsDashboard() {
             Authorization: `Bearer ${token}`,
           },
         });
-       console.log("Fetched Leads:", response.data); // Log the fetched leads
-        setLeads(response.data.leads);
+       console.log("Fetched Leads:", response.data.agents); // Log the fetched leads
+        setLeads(response.data.agents);
         setLoading(false);
       } catch (err) {
         console.error("Error fetching leads:", err);
