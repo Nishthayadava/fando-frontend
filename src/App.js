@@ -115,12 +115,44 @@ function App() {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('role');
-    setIsLoggedIn(false);
-    setRole(null); // Clear role
+  const handleLogout = async () => {
+    const userId = localStorage.getItem('userId'); // Get userId from localStorage
+    if (!userId) {
+      console.error('User is not logged in');
+      return;
+    }
+
+    try {
+      // Send a POST request to the backend to log out and update attendance
+      const response = await axios.post(
+        'https://fandoexpert1.onrender.com/api/attendance/logout',
+        { userId }, // Send userId to backend to log out
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`, // Send token if needed
+          },
+        }
+      );
+
+      // Handle the success response
+      console.log('Logout success:', response.data);
+
+      // Clear localStorage
+      localStorage.removeItem('token');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('role');
+
+      // Update state to reflect the user is logged out
+      setIsLoggedIn(false);
+      setRole(null);
+
+      // Redirect to login page
+<Navigate to="/login" />
+    } catch (error) {
+      // Handle error during logout API call
+      console.error('Error logging out:', error);
+      alert('Error logging out. Please try again later.');
+    }
   };
 
   const isAuthenticated = () => {
