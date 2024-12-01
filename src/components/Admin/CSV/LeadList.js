@@ -16,7 +16,7 @@ function LeadList({ token }) {
         .then((response) => {
           
           const filteredLeadss = response.data.filter((lead) => {
-            return String(lead.userid).trim() === '-';
+            return String(lead.userid).trim() === 'null';
           });
           
 
