@@ -174,7 +174,7 @@ function App() {
 
 
   return (
-    <Router>
+    <Router basename='/fando-frontend'>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
         <AppBar position="fixed" open={open}>
