@@ -201,9 +201,6 @@ function App() {
                 
         
 
-            {/* Conditional Menu Items based on Role */}
-            {role === 'Admin' && (
-              <>
                 <ListItem button component={Link} to="/admindashboard" sx={{ color: 'white' }}>
                   <ListItemIcon>
                     <DashboardIcon sx={{ color: 'white' }}/>
@@ -263,11 +260,10 @@ function App() {
                   <ListItemText primary="Quality And Compliance" />
                 </ListItem>
 
-              </>
-            )}
+             
 
-            {role === 'Agent' && (
-              <>
+            
+            
               <ListItem button component={Link} to="/dashboard" sx={{ color: 'white' }}>
               <ListItemIcon>
                 <DashboardIcon  sx={{ color: 'white' }}/>
@@ -322,9 +318,7 @@ function App() {
                   <ListItemText primary="Quality And Compliance" />
                 </ListItem>
               
-              </>
-              
-            )}
+        
 
             {/* Login/Logout */}
             {isLoggedIn ? (
