@@ -292,8 +292,9 @@ function App() {
                   </ListItemIcon>
                   <ListItemText primary="Quality And Compliance" />
                 </ListItem>
-<>
-}
+ </>
+              
+            )}
            {role.trim() === 'Agent' && (
               <> 
             
