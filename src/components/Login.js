@@ -24,6 +24,8 @@ const Login = () => {
     const [error, setError] = useState(null); // To store error message if login fails
     const [success, setSuccess] = useState(false); // To track success login state
     const [rolest,setRole]=useState(null);
+    const navigate = useNavigate();
+
     const handleLogin = async () => {
         const { username, password } = credentials;
         const payload = { username, password };
@@ -64,9 +66,10 @@ const Login = () => {
 
             if (trimmedRole == 'Admin') {
     
-                window.location.href = '/admindashboard'; // Redirect to admin dashboard
+    navigate('/admindashboard');  // Use navigate instead of window.location.replace
             } else if (trimmedRole == 'Agent'){
-                window.location.href = '/dashboard'; // Redirect to agent dashboard
+                    navigate('/dashboard');  // Use navigate instead of window.location.replace
+
             }
         }           
         } catch (error) {
