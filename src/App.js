@@ -292,8 +292,8 @@ function App() {
                 </ListItem>
 
              
-
-            
+           {role === 'Agent' && (
+              <> 
             
               <ListItem button component={Link} to="/dashboard" sx={{ color: 'white' }}>
               <ListItemIcon>
@@ -349,7 +349,9 @@ function App() {
                   <ListItemText primary="Quality And Compliance" />
                 </ListItem>
               
-        
+     </>
+              
+            )}
 
             {/* Login/Logout */}
             {isLoggedIn ? (
