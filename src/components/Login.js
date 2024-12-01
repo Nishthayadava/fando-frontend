@@ -66,9 +66,9 @@ const Login = () => {
 
             if (trimmedRole == 'Admin') {
     
-    navigate('/admindashboard');  // Use navigate instead of window.location.replace
+                window.location.replace('/admindashboard'); // Redirect to admin dashboard
             } else if (trimmedRole == 'Agent'){
-                    navigate('/dashboard');  // Use navigate instead of window.location.replace
+            window.location.replace('/dashboard'); // Redirect to agent dashboard
 
             }
         }           
