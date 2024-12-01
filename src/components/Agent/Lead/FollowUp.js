@@ -22,7 +22,9 @@ function FollowUp({ token }) {
       })
       .then((response) => {
         const filteredLeads = response.data.filter((lead) => {
-          return String(lead.remark).trim() !== 'null' || String(lead.status).trim() !== 'null';
+          const roleget = localStorage.getItem('role');
+
+          return lead.userid && lead.userid.trim() === roleget &&  String(lead.remark).trim() !== 'null' || String(lead.status).trim() !== 'null';
         });
         setLeads(filteredLeads); // Set filtered leads
       })
