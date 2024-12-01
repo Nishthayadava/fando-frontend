@@ -50,16 +50,20 @@ const Login = () => {
                 localStorage.setItem('userId', userId);
                 localStorage.setItem('role', role); // Store role in localStorage as well
             }
+                       alert("Token record");
 
             // Step 3: Record attendance after successful login
             await recordLogin(userId);
+                       alert("record login");
 
             // Step 4: Show success message and navigate after a short delay
             setSuccess(true);
+                       alert("success");
 
             const tokenget = localStorage.getItem('token');
             const roleget = localStorage.getItem('role');
             const trimmedRole = roleget ? roleget.trim() : roleget; // Ensure roleget is not null or undefined
+                       alert("trimed role");
 
             // Navigate to the appropriate dashboard based on the role
                        alert("Login Succes");
