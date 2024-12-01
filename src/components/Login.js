@@ -23,7 +23,6 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null); // To store error message if login fails
     const [success, setSuccess] = useState(false); // To track success login state
-    const navigate = useNavigate(); // Using useNavigate for navigation after login
 
     const handleLogin = async () => {
         const { username, password } = credentials;
@@ -61,8 +60,21 @@ const Login = () => {
 
             // Step 4: Show success message and navigate after a short delay
             setSuccess(true);
-           navigatefunc();
+            
+             const tokenget = localStorage.getItem('token');
+            const roleget = localStorage.getItem('role');
+            const trimmedRole = roleget ? roleget.trim() : roleget; // Ensure roleget is not null or undefined
 
+            // Navigate to the appropriate dashboard based on the role
+            if (tokenget  && trimmedRole) {
+
+            if (trimmedRole == 'Admin') {
+    
+                window.location.href = '/admindashboard'; // Redirect to admin dashboard
+            } else if (trimmedRole == 'Agent'){
+                window.location.href = '/dashboard'; // Redirect to agent dashboard
+            }
+                
         } catch (error) {
             console.error('Login failed:', error);
             setError('Login failed. Please check your credentials.'); // Set error message
@@ -70,22 +82,7 @@ const Login = () => {
             setLoading(false); // Set loading to false after request completes
         }
     };
-  const navigatefunc = async () => {
-        const tokenget = await localStorage.getItem('token');
-        // Navigate to the appropriate dashboard based on the role
-        if (tokenget) {
 
-            const role = "Admin"; // Example role after successful login
-
-        if (role == 'Admin') {
-            alert(rolest)
-
-            window.location.href = '/admindashboard'; // Redirect to admin dashboard
-        } else if (role == 'Agent'){
-            window.location.href = '/dashboard'; // Redirect to agent dashboard
-        }
-    }
-    }
     const recordLogin = async (userId) => {
         const token = localStorage.getItem('token');
         try {
@@ -100,19 +97,7 @@ const Login = () => {
         }
     };
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        const role = localStorage.getItem('role');
-        
-        if (token && role) {
-            // Redirect the user based on their role
-            if (role === 'Admin') {
-                navigate('/admindashboard');
-            } else if(role === 'Agent') {
-                navigate('/dashboard');
-            }
-        }
-    }, [navigate]);
+
 
     return (
         <StyledContainer>
