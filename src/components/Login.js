@@ -66,16 +66,15 @@ const Login = () => {
                        alert("trimed role");
 
             // Navigate to the appropriate dashboard based on the role
-                       alert("Login Succes");
 
             if (tokenget  && trimmedRole) {
            alert(trimmedRole);
             if (trimmedRole == 'Admin') {
                 alert(tokenget);
 
-                window.location.replace('/admindashboard'); // Redirect to admin dashboard
+                navigate('/admindashboard'); // Redirect to admin dashboard
             } else if (trimmedRole == 'Agent'){
-            window.location.replace('/dashboard'); // Redirect to agent dashboard
+           navigate('/dashboard'); // Redirect to agent dashboard
 
             }
         }           
