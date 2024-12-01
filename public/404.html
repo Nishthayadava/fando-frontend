@@ -1,26 +1,28 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <title>Fando-Expert</title>
     <script type="text/javascript">
-      // Single Page Apps for GitHub Pages (Updated for avoiding infinite loop)
-      // This script takes the current URL, converts the path and query string into a query string, 
-      // and then redirects the browser to the new URL without the path and with only the query string and hash fragment.
-
+      // Only handle the URL transformation once.
       var l = window.location;
 
-      // Check if the URL has already been processed to prevent infinite loop
+      // Check if we are on a single page app, and avoid infinite redirects
       if (!l.search.includes('~and~')) {
         var pathSegmentsToKeep = 1;
 
-        l.replace(
-          l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
-          l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?/' +
-          l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
-          (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
-          l.hash
-        );
+        // Build the base URL (without query and hash)
+        var baseUrl = l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+          l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/');
+
+        // Ensure we remove unnecessary query strings or hash.
+        var finalUrl = baseUrl + l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/') + l.search.replace(/&/g, '~and~') + l.hash;
+
+        // Redirect to the clean final URL without unnecessary parts
+        // Ensuring only the valid path remains
+        if (finalUrl !== l.href) {
+          window.location.replace(finalUrl);  // Use replace to avoid adding history
+        }
       }
     </script>
   </head>
