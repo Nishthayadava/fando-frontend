@@ -62,10 +62,12 @@ const Login = () => {
             const trimmedRole = roleget ? roleget.trim() : roleget; // Ensure roleget is not null or undefined
 
             // Navigate to the appropriate dashboard based on the role
+                       alert("Login Succes");
+
             if (tokenget  && trimmedRole) {
-            console.log(trimmedRole);
+           alert(trimmedRole);
             if (trimmedRole == 'Admin') {
-                console.log(tokenget);
+                alert(tokenget);
 
                 window.location.replace('/admindashboard'); // Redirect to admin dashboard
             } else if (trimmedRole == 'Agent'){
