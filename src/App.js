@@ -114,7 +114,6 @@ function App() {
       console.error('Login failed:', error);
     }
   };
-
   const handleLogout = async () => {
     const userId = localStorage.getItem('userId'); // Get userId from localStorage
     if (!userId) {
@@ -154,6 +153,7 @@ function App() {
       alert('Error logging out. Please try again later.');
     }
   };
+
 
   const isAuthenticated = () => {
     return !!localStorage.getItem('token'); // Check if token exists
@@ -230,10 +230,11 @@ function App() {
                {/* Profile Section */}
           
                 
-             
-           {role.trim() === 'Admin' && (
-              <> 
+        
 
+            {/* Conditional Menu Items based on Role */}
+            {/* {role === 'Admin' && (
+              <> */}
                 <ListItem button component={Link} to="/admindashboard" sx={{ color: 'white' }}>
                   <ListItemIcon>
                     <DashboardIcon sx={{ color: 'white' }}/>
@@ -292,12 +293,12 @@ function App() {
                   </ListItemIcon>
                   <ListItemText primary="Quality And Compliance" />
                 </ListItem>
- </>
-              
-            )}
-           {role.trim() === 'Agent' && (
-              <> 
-            
+
+              {/* </>
+            )} */}
+
+            {/* {role === 'Agent' && (
+              <> */}
               <ListItem button component={Link} to="/dashboard" sx={{ color: 'white' }}>
               <ListItemIcon>
                 <DashboardIcon  sx={{ color: 'white' }}/>
@@ -352,9 +353,9 @@ function App() {
                   <ListItemText primary="Quality And Compliance" />
                 </ListItem>
               
-     </>
+              {/* </>
               
-            )}
+            )} */}
 
             {/* Login/Logout */}
             {isLoggedIn ? (
@@ -443,6 +444,7 @@ function App() {
           </Routes>
         </Main>
       </Box>
+   
   );
 }
 
