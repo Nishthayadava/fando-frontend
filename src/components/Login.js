@@ -39,10 +39,8 @@ const Login = () => {
             });
 
             // Log the full response to check what is being returned from the backend
-            console.log('Login Response:', response.data);
 
             const { token, userId, role } = response.data; // Ensure backend returns role
-            console.log('Token:', token, 'UserId:', userId, 'Role:', role);
 
             if (token) {
                 // Step 2: Store token, userId, and role in localStorage
@@ -50,11 +48,7 @@ const Login = () => {
     localStorage.setItem('token', token);
     localStorage.setItem('userId', userId);
     localStorage.setItem('role', role);
-                    
-                // Log to verify storage
-                console.log('Token Stored:', localStorage.getItem('token'));
-                console.log('UserId Stored:', localStorage.getItem('userId'));
-                console.log('Role Stored:', localStorage.getItem('role'));
+              
 } catch (err) {
     console.error('Error storing to localStorage:', err);
     setError('Error saving your login details.');
@@ -67,14 +61,7 @@ const Login = () => {
 
             // Step 4: Show success message and navigate after a short delay
             setSuccess(true);
-            setTimeout(() => {
-                // Navigate to the appropriate dashboard based on the role
-                if (role === 'Admin') {
-                    navigate('/admindashboard'); // Redirect to Admin Dashboard
-                } else if (role === 'Agent'){
-                    navigate('/dashboard'); // Redirect to the general dashboard for Agents
-                }
-            }, 1500); // Give time for the success message to be seen
+           navigatefunc();
 
         } catch (error) {
             console.error('Login failed:', error);
@@ -83,7 +70,22 @@ const Login = () => {
             setLoading(false); // Set loading to false after request completes
         }
     };
+  const navigatefunc = async () => {
+        const tokenget = await localStorage.getItem('token');
+        // Navigate to the appropriate dashboard based on the role
+        if (tokenget) {
 
+            const role = "Admin"; // Example role after successful login
+
+        if (role == 'Admin') {
+            alert(rolest)
+
+            window.location.href = '/admindashboard'; // Redirect to admin dashboard
+        } else if (role == 'Agent'){
+            window.location.href = '/dashboard'; // Redirect to agent dashboard
+        }
+    }
+    }
     const recordLogin = async (userId) => {
         const token = localStorage.getItem('token');
         try {
