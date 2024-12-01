@@ -47,7 +47,7 @@ function FollowUp({ token }) {
         return (
           <IconButton
             color="primary"
-            onClick={() => handleEditClick(params)}npm run build
+            onClick={() => handleEditClick(params)}
           >
             <EditIcon />
           </IconButton>
