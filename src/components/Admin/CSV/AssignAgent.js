@@ -20,7 +20,7 @@ function AssignAgent({ token }) {
       .then((response) => {
         // Filter out rows where `userid` is equal to `'-'`
         const filteredLeadss = response.data.filter((lead) => {
-          return String(lead.userid).trim() === '-';
+          return String(lead.userid).trim() === 'null';
         });
         setLeads(filteredLeadss);
 
