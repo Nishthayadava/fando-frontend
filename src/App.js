@@ -230,7 +230,9 @@ function App() {
                {/* Profile Section */}
           
                 
-        
+             
+           {role.trim() === 'Admin' && (
+              <> 
 
                 <ListItem button component={Link} to="/admindashboard" sx={{ color: 'white' }}>
                   <ListItemIcon>
@@ -290,9 +292,9 @@ function App() {
                   </ListItemIcon>
                   <ListItemText primary="Quality And Compliance" />
                 </ListItem>
-
-             
-           {role === 'Agent' && (
+<>
+}
+           {role.trim() === 'Agent' && (
               <> 
             
               <ListItem button component={Link} to="/dashboard" sx={{ color: 'white' }}>
