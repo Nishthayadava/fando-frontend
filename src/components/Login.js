@@ -23,7 +23,7 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null); // To store error message if login fails
     const [success, setSuccess] = useState(false); // To track success login state
-
+    const [rolest,setRole]=useState(null);
     const handleLogin = async () => {
         const { username, password } = credentials;
         const payload = { username, password };
@@ -38,21 +38,15 @@ const Login = () => {
             });
 
             // Log the full response to check what is being returned from the backend
+            console.log('Login Response:', response.data);
 
             const { token, userId, role } = response.data; // Ensure backend returns role
-
+            console.log('Token:', token, 'UserId:', userId, 'Role:', role);
             if (token) {
                 // Step 2: Store token, userId, and role in localStorage
-                try {
-    localStorage.setItem('token', token);
-    localStorage.setItem('userId', userId);
-    localStorage.setItem('role', role);
-              
-} catch (err) {
-    console.error('Error storing to localStorage:', err);
-    setError('Error saving your login details.');
-}
-
+                localStorage.setItem('token', token);
+                localStorage.setItem('userId', userId);
+                localStorage.setItem('role', role); // Store role in localStorage as well
             }
 
             // Step 3: Record attendance after successful login
@@ -60,8 +54,8 @@ const Login = () => {
 
             // Step 4: Show success message and navigate after a short delay
             setSuccess(true);
-            
-             const tokenget = localStorage.getItem('token');
+
+            const tokenget = localStorage.getItem('token');
             const roleget = localStorage.getItem('role');
             const trimmedRole = roleget ? roleget.trim() : roleget; // Ensure roleget is not null or undefined
 
@@ -74,7 +68,7 @@ const Login = () => {
             } else if (trimmedRole == 'Agent'){
                 window.location.href = '/dashboard'; // Redirect to agent dashboard
             }
-                
+        }           
         } catch (error) {
             console.error('Login failed:', error);
             setError('Login failed. Please check your credentials.'); // Set error message
@@ -96,7 +90,6 @@ const Login = () => {
             console.error("Error during attendance recording:", error);
         }
     };
-
 
 
     return (
