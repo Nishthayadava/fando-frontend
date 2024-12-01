@@ -46,9 +46,20 @@ const Login = () => {
 
             if (token) {
                 // Step 2: Store token, userId, and role in localStorage
-                localStorage.setItem('token', token);
-                localStorage.setItem('userId', userId);
-                localStorage.setItem('role', role); // Store role in localStorage as well
+                try {
+    localStorage.setItem('token', token);
+    localStorage.setItem('userId', userId);
+    localStorage.setItem('role', role);
+                    
+                // Log to verify storage
+                console.log('Token Stored:', localStorage.getItem('token'));
+                console.log('UserId Stored:', localStorage.getItem('userId'));
+                console.log('Role Stored:', localStorage.getItem('role'));
+} catch (err) {
+    console.error('Error storing to localStorage:', err);
+    setError('Error saving your login details.');
+}
+
             }
 
             // Step 3: Record attendance after successful login
