@@ -37,18 +37,22 @@ function LeadsDashboard() {
     const fetchLeads = async () => {
       try {
         const token = localStorage.getItem('token');
+        
         const response = await axios.get('https://fandoexpert1.onrender.com/api/my-leads', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
+       console.log("Fetched Leads:", response.data); // Log the fetched leads
         setLeads(response.data.leads);
         setLoading(false);
       } catch (err) {
+        console.error("Error fetching leads:", err);
         setLoading(false);
         setError('Failed to fetch leads. Please try again later.');
       }
     };
+    
 
     fetchLeads();
   }, []);
@@ -82,12 +86,15 @@ function LeadsDashboard() {
 
     try {
       const token = localStorage.getItem('token');
+      const roless = localStorage.getItem('role');
+
       const response = await axios.patch(
         'https://fandoexpert1.onrender.com/api/update-lead-status',
         {
           leadId: editLead.id,
           newStatus: editLead.status,
           remark: editLead.remark, // Assuming you will add remark to the lead data
+          role:roless
         },
         {
           headers: {
