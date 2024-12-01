@@ -14,6 +14,9 @@ function FollowUp({ token }) {
 
 
   useEffect(() => {
+
+    const userIdFromStorage = localStorage.getItem('userId');
+
     axios
       .get('https://fandoexpert1.onrender.com/api/getleads', {
         headers: {
@@ -21,12 +24,9 @@ function FollowUp({ token }) {
         },
       })
       .then((response) => {
-        const filteredLeads = response.data.filter((lead) => {
-          const roleget = localStorage.getItem('role');
-
-          return lead.userid && lead.userid.trim() === roleget &&  String(lead.remark).trim() !== 'null' || String(lead.status).trim() !== 'null';
-        });
-        setLeads(filteredLeads); // Set filtered leads
+        // Filter the leads to only include those where the lead's userid matches the logged-in user's userId
+        const filteredLeads = response.data.filter((lead) => lead.userid && lead.userid === userIdFromStorage);
+        setLeads(filteredLeads); // Set the filtered leads to state
       })
       .catch((error) => {
         console.error('Error fetching leads', error);
