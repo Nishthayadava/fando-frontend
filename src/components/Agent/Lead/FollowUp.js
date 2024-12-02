@@ -41,6 +41,8 @@ function FollowUp({ token }) {
     { field: 'address', headerName: 'Address', width: 200 },
     { field: 'status', headerName: 'Status', width: 150, editable: true },
     { field: 'remark', headerName: 'Remark', width: 200, editable: true },
+        { field: 'created', headerName: 'Assign Date', width: 200, editable: true },
+        { field: 'updated', headerName: 'Updated Date', width: 200, editable: true },
     {
       field: 'action',
       headerName: 'Action',
