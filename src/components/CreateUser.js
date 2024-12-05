@@ -28,8 +28,13 @@ const CreateUser = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+         const trimmedData = {
+            username: userData.username.trim(),
+            password: userData.password.trim(),
+            role: userData.role.trim()
+            };
         try {
-            const response = await axios.post('https://fandoexpert1.onrender.com/api/create-user', userData);
+            const response = await axios.post('https://fandoexpert1.onrender.com/api/create-user', trimmedData);
             setMessage(response.data);
         } catch (error) {
             console.error(error);
