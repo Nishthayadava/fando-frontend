@@ -7,7 +7,10 @@
   <body>
     <script>
       // Always redirect to index.html so React Router can handle the path
-      window.location.replace('/');
+       // Avoid redirecting if we are already on index.html (or any valid React route)
+      if (window.location.pathname !== '/dashboard') {
+        window.location.replace('/dashboard');
+      }
     </script>
   </body>
 </html>
