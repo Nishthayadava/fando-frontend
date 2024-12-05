@@ -65,7 +65,6 @@ const Login = () => {
             // Navigate to the appropriate dashboard based on the role
 
             if (tokenget  && trimmedRole) {
-           alert(trimmedRole);
             if (trimmedRole == 'Admin') {
 
                 navigate('/admindashboard'); // Redirect to admin dashboard
