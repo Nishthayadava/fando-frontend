@@ -1,36 +1,48 @@
-// Header.js
 import React from 'react';
 import { AppBar, Toolbar, IconButton, Typography } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
+import MenuIcon from '@mui/icons-material/Menu'; // Open Drawer Icon
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'; // Close Drawer Icon
 
-const Header = () => {
-    const [open, setOpen] = React.useState(true); // Default to open
-
-    const handleDrawerOpen = () => {
-        setOpen(true);
-      };
-    
+const Header = ({ handleDrawerOpen, handleDrawerClose, open }) => {
   return (
-    <AppBar position="fixed">
+    <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+      <Toolbar>
+        {/* Open drawer button */}
+        {!open && (
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            onClick={handleDrawerOpen}
+            edge="start"
+            sx={{
+              mr: 2,
+              display: { xs: 'block', sm: 'block' },
+            }}
+          >
+            <MenuIcon />
+          </IconButton>
+        )}
 
-<Toolbar>
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              onClick={handleDrawerOpen}
-              edge="start"
-              sx={{
-                mr: 2,
-                ...(open && { display: 'none' }),
-              }}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="h6" noWrap component="div">
-              Welcome To F&O Expert CRM
-            </Typography>
-          </Toolbar>
-     
+        {/* Close drawer button */}
+        {open && (
+          <IconButton
+            color="inherit"
+            aria-label="close drawer"
+            onClick={handleDrawerClose}
+            edge="start"
+            sx={{
+              mr: 2,
+              display: { xs: 'block', sm: 'block' },
+            }}
+          >
+            <ChevronLeftIcon />
+          </IconButton>
+        )}
+
+        <Typography variant="h6" noWrap component="div">
+          Welcome To F&O Expert CRM
+        </Typography>
+      </Toolbar>
     </AppBar>
   );
 };
