@@ -10,7 +10,20 @@ import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { useState } from 'react';
 
+
+
+const DrawerHeader = styled('div')(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  padding: theme.spacing(0, 1),
+  ...theme.mixins.toolbar,
+  justifyContent: 'flex-end',
+}));
+
+
 const Sidebar = ({ isLoggedIn, role }) => {
+    const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
+
   return (
     <div>
             <Drawer
