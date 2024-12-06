@@ -24,6 +24,8 @@ const Login = () => {
     const [error, setError] = useState(null); // To store error message if login fails
     const [success, setSuccess] = useState(false); // To track success login state
     const [rolest,setRole]=useState(null);
+        const navigate = useNavigate(); // <-- Use useNavigate to get the navigate function
+
     const handleLogin = async () => {
         const { username, password } = credentials;
         const payload = { username, password };
