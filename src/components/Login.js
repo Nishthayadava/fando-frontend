@@ -62,16 +62,14 @@ const Login = () => {
             const trimmedRole = roleget ? roleget.trim() : roleget; // Ensure roleget is not null or undefined
 
             // Navigate to the appropriate dashboard based on the role
-            if (tokenget  && trimmedRole) {
-
-            if (trimmedRole == 'Admin') {
-    
-                window.location.replace('/admindashboard'); // Redirect to admin dashboard
-                // Redirect to admin dashboard
-            } else if (trimmedRole == 'Agent'){
-            window.location.replace('/dashboard'); // Redirect to agent dashboard
-            }
-        }           
+           // Navigate to the appropriate dashboard based on the role
+            if (tokenget && trimmedRole) {
+                if (trimmedRole === 'Admin') {
+                    navigate('/admindashboard'); // Redirect to admin dashboard
+                } else if (trimmedRole === 'Agent') {
+                    navigate('/dashboard'); // Redirect to agent dashboard
+                }
+            }          
            // Step 5: Redirect to the saved route or home if no route was saved
       const redirectTo = localStorage.getItem('redirectTo') || '/'; // Default to home if no path
       localStorage.removeItem('redirectTo'); // Remove redirect path after redirection
