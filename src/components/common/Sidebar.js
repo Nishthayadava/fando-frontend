@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Link, Navigate } from 'react-router-dom'; // Import Navigate here
+import { Link, Navigate } from 'react-router-dom'; // Import Navigate for redirection
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import FolderSpecialIcon from '@mui/icons-material/FolderSpecial';
-import { List, ListItem, ListItemText, Divider, ListItemIcon, Avatar, IconButton, Drawer } from '@mui/material'; // Import Drawer
+import { List, ListItem, ListItemText, Divider, ListItemIcon, Avatar, IconButton, Drawer } from '@mui/material'; // Import Drawer components
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import Diversity3Icon from '@mui/icons-material/Diversity3';
@@ -17,7 +16,6 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import LoginIcon from '@mui/icons-material/Login';
 import { styled, useTheme } from '@mui/material/styles'; // Import useTheme
 
-const drawerWidth = 240; // Defining the drawerWidth constant
 
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -27,16 +25,11 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   justifyContent: 'flex-end',
 }));
 
-const Sidebar = () => {
-  const [open, setOpen] = useState(true);
+const Sidebar = ({ open, handleDrawerClose }) => {
   const theme = useTheme();
-  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token')); // Track login state
-  const [role, setRole] = useState(localStorage.getItem('role')); // Track user role
-  const [redirectTo, setRedirectTo] = useState(null); // Track redirection after login
-
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
+  const [role, setRole] = useState(localStorage.getItem('role'));
+  const [redirectTo, setRedirectTo] = useState(null);
 
   const handleLogin = async (userId) => {
     try {
@@ -47,9 +40,9 @@ const Sidebar = () => {
         localStorage.setItem('userId', response.data.userId);
         localStorage.setItem('role', response.data.role); // Store role in localStorage
         setIsLoggedIn(true);
-        setRole(response.data.role); // Update state with the role
+        setRole(response.data.role);
 
-        // Redirect user to the appropriate dashboard after successful login
+        // Redirect based on role
         setRedirectTo(response.data.role === 'Admin' ? '/admindashboard' : '/dashboard');
       }
     } catch (error) {
@@ -74,25 +67,23 @@ const Sidebar = () => {
           },
         }
       );
-    
+
       console.log('Logout success:', response.data);
-    
+
       localStorage.removeItem('token');
       localStorage.removeItem('userId');
       localStorage.removeItem('role');
-    
+
       setIsLoggedIn(false);
       setRole(null);
-    
+
       setRedirectTo('/login');
     } catch (error) {
       console.error('Error logging out:', error);
       alert(`Error logging out: ${error.response ? error.response.data : error.message}`);
     }
-    
   };
 
-  // If redirectTo is set, we will redirect the user
   if (redirectTo) {
     return <Navigate to={redirectTo} />;
   }
@@ -101,12 +92,14 @@ const Sidebar = () => {
     <div>
       <Drawer
         sx={{
-          width: drawerWidth,
           flexShrink: 0,
           '& .MuiDrawer-paper': {
-            width: drawerWidth,
             boxSizing: 'border-box',
+            paddingTop:'64px',
+
             backgroundColor: '#4d0099',
+            transition: 'transform 0.3s ease',
+            transform: open ? 'translateX(0)' : 'translateX(-50%)', // Move sidebar in and out
           },
         }}
         variant="persistent"
@@ -114,15 +107,14 @@ const Sidebar = () => {
         open={open}
       >
         <DrawerHeader>
+          {/* <IconButton onClick={handleDrawerClose}>
+            {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+          </IconButton> */}
           {isLoggedIn && (
             <ListItem sx={{ padding: '16px', display: 'flex', justifyContent: 'center' }}>
               <Avatar sx={{ width: 50, height: 50 }}></Avatar> {/* Profile icon */}
             </ListItem>
           )}
-
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-          </IconButton>
         </DrawerHeader>
         <Divider />
         <List>
