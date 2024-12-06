@@ -29,7 +29,6 @@ const Sidebar = ({ open, handleDrawerClose }) => {
   const theme = useTheme();
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
   const [role, setRole] = useState(localStorage.getItem('role'));
-  const [redirectTo, setRedirectTo] = useState(null);
 
   const handleLogin = async (userId) => {
     try {
@@ -43,7 +42,6 @@ const Sidebar = ({ open, handleDrawerClose }) => {
         setRole(response.data.role);
 
         // Redirect based on role
-        setRedirectTo(response.data.role === 'Admin' ? '/admindashboard' : '/dashboard');
       }
     } catch (error) {
       console.error('Login failed:', error);
@@ -77,16 +75,12 @@ const Sidebar = ({ open, handleDrawerClose }) => {
       setIsLoggedIn(false);
       setRole(null);
 
-      setRedirectTo('/login');
     } catch (error) {
       console.error('Error logging out:', error);
       alert(`Error logging out: ${error.response ? error.response.data : error.message}`);
     }
   };
 
-  if (redirectTo) {
-    return <Navigate to={redirectTo} />;
-  }
 
   return (
     <div>
