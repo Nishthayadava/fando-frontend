@@ -1,12 +1,11 @@
 // App.js
 import React, { useState, useEffect } from 'react';
-import { Box, CssBaseline, IconButton } from '@mui/material';
+import { Box, CssBaseline } from '@mui/material';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Sidebar from './components/Sidebar';
-import RoutesConfig from './components/RoutesConfig';
+import Sidebar from './components/common/Sidebar';
+import RoutesConfig from './components/common/RoutesConfig';
 import { styled, useTheme } from '@mui/material/styles';
-import { useNavigate } from 'react-router-dom';
-import Header from './components/Header'; // Import the Header component
+import Header from './components/common/Header'; // Import the Header component
 
 const drawerWidth = 240;
 
@@ -24,16 +23,13 @@ const StyledAppBar = styled('div', { shouldForwardProp: (prop) => prop !== 'open
 );
 
 function App() {
-  const theme = useTheme();
   const [role, setRole] = useState(localStorage.getItem('role'));
   const [open, setOpen] = useState(true);
   const [loading, setLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
 
   // Check if user is authenticated
-  const isAuthenticated = () => {
-    return !!localStorage.getItem('token');
-  };
+
 
   // Ensure state is updated on initial load
   useEffect(() => {
@@ -45,7 +41,7 @@ function App() {
   if (loading) return <div>Loading...</div>; // Avoid flickering until the auth state is resolved
 
   return (
-    <Router>
+   
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
         <Header /> {/* Use the Header component here */}
@@ -55,7 +51,7 @@ function App() {
           <RoutesConfig isLoggedIn={isLoggedIn} />
         </StyledAppBar>
       </Box>
-    </Router>
+   
   );
 }
 
