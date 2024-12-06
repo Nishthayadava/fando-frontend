@@ -1,14 +1,48 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { List, ListItem, ListItemIcon, ListItemText, Divider } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import FolderSpecialIcon from '@mui/icons-material/FolderSpecial';
+import { List, ListItem, ListItemText, Divider, ListItemIcon, Avatar, IconButton } from '@mui/material';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import SalesIcon from '@mui/icons-material/AdsClick';
+import ZoomInIcon from '@mui/icons-material/ZoomIn';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import { useState } from 'react';
 
 const Sidebar = ({ isLoggedIn, role }) => {
   return (
     <div>
-  <List>
+            <Drawer
+          sx={{
+            width: drawerWidth,
+            flexShrink: 0,
+            '& .MuiDrawer-paper': {
+              width: drawerWidth,
+              boxSizing: 'border-box',
+              backgroundColor: '#4d0099', // Set background color to blue
+            },
+          }}
+          variant="persistent"
+          anchor="left"
+          open={open}
+        >
+          <DrawerHeader>
+
+          {isLoggedIn && (
+            <ListItem sx={{ padding: '16px', display: 'flex', justifyContent: 'center' }}>
+              <Avatar sx={{ width: 50, height: 50 }}></Avatar> {/* Profile icon */}
+            </ListItem>
+          )}
+
+            <IconButton onClick={handleDrawerClose}>
+              {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+            </IconButton>
+            
+
+          </DrawerHeader>
+          <Divider />
+       <List>
             {/* Common Menu Item */}
 
                {/* Profile Section */}
@@ -158,7 +192,9 @@ const Sidebar = ({ isLoggedIn, role }) => {
               </ListItem>
             )}
           </List>
-      <Divider />
+        </Drawer>
+
+  
     </div>
   );
 };
