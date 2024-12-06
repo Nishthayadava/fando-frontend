@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Box, CssBaseline, IconButton, Toolbar, AppBar as MuiAppBar } from '@mui/material';
+import { Box, CssBaseline, IconButton, Toolbar } from '@mui/material';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
-import AuthenticatedRoute from './components/AuthenticatedRoute';
+import RoutesConfig from './components/RoutesConfig';
 import MenuIcon from '@mui/icons-material/Menu';
 import { styled, useTheme } from '@mui/material/styles';
-import { AppBar, Drawer } from '@mui/material';
+import { AppBar as MuiAppBar, Drawer } from '@mui/material'; // Import original AppBar as MuiAppBar
 import { useNavigate } from 'react-router-dom';
 
 const drawerWidth = 240;
 
-// Styled AppBar to handle dynamic opening/closing
-const AppBar = styled(MuiAppBar, {
+// Rename custom styled AppBar to avoid conflict
+const StyledAppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
 })(({ theme, open }) => ({
   transition: theme.transitions.create(['margin', 'width'], {
@@ -66,17 +66,17 @@ function App() {
     <Router>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
-        <AppBar position="fixed" open={open}>
+        <StyledAppBar position="fixed" open={open}>
           <Toolbar>
             <IconButton edge="start" color="inherit" aria-label="menu" onClick={() => setOpen(!open)}>
               <MenuIcon />
             </IconButton>
           </Toolbar>
-        </AppBar>
+        </StyledAppBar>
 
         <Sidebar open={open} />
         <Main open={open}>
-          <AuthenticatedRoute isLoggedIn={isLoggedIn} />
+          <RoutesConfig isLoggedIn={isLoggedIn} />
         </Main>
       </Box>
     </Router>
