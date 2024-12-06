@@ -44,7 +44,6 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import axios from 'axios';
 import FollowUp from './components/Agent/Lead/FollowUp';
 
-const drawerWidth = 240;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
   ({ theme, open }) => ({
@@ -58,101 +57,14 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
   })
 );
 
-const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== 'open',
-})(({ theme, open }) => ({
-  transition: theme.transitions.create(['margin', 'width'], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  ...(open && {
-    width: `calc(100% - ${drawerWidth}px)`,
-    marginLeft: `${drawerWidth}px`,
-    transition: theme.transitions.create(['margin', 'width'], {
-      easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  }),
-  backgroundColor: '#4d0099',
-}));
 
-const DrawerHeader = styled('div')(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  padding: theme.spacing(0, 1),
-  ...theme.mixins.toolbar,
-  justifyContent: 'flex-end',
-}));
 
 function App() {
-  const theme = useTheme();
-  const [open, setOpen] = React.useState(true); // Default to open
-  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
+
   const [role, setRole] = useState(localStorage.getItem('role')); // Get role from localStorage
   const [loading, setLoading] = useState(true); // Loading state to avoid flickering
 
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
-
-  const handleLogin = async (userId) => {
-    try {
-      const response = await axios.post('/api/attendance/login', { userId });
-
-      if (response.status === 201) {
-        localStorage.setItem('token', response.data.token);
-        localStorage.setItem('userId', response.data.userId);
-        localStorage.setItem('role', response.data.role); // Store role in localStorage
-        setIsLoggedIn(true);
-        setRole(response.data.role); // Update state with the role
-      }
-    } catch (error) {
-      console.error('Login failed:', error);
-    }
-  };
-  const handleLogout = async () => {
-    const userId = localStorage.getItem('userId'); // Get userId from localStorage
-    if (!userId) {
-      console.error('User is not logged in');
-      return;
-    }
-
-    try {
-      // Send a POST request to the backend to log out and update attendance
-      const response = await axios.post(
-        'https://fandoexpert1.onrender.com/api/attendance/logout',
-        { userId }, // Send userId to backend to log out
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`, // Send token if needed
-          },
-        }
-      );
-
-      // Handle the success response
-      console.log('Logout success:', response.data);
-
-      // Clear localStorage
-      localStorage.removeItem('token');
-      localStorage.removeItem('userId');
-      localStorage.removeItem('role');
-
-      // Update state to reflect the user is logged out
-      setIsLoggedIn(false);
-      setRole(null);
-
-      // Redirect to login page
-<Navigate to="/login" />
-    } catch (error) {
-      // Handle error during logout API call
-      console.error('Error logging out:', error);
-      alert('Error logging out. Please try again later.');
-    }
-  };
+  
 
 
   const isAuthenticated = () => {
@@ -174,112 +86,7 @@ function App() {
 
 
   return (
-      <Box sx={{ display: 'flex' }}>
-        <CssBaseline />
-        <AppBar position="fixed" open={open}>
-          
-        </AppBar>
-        <Drawer
-          sx={{
-            width: drawerWidth,
-            flexShrink: 0,
-            '& .MuiDrawer-paper': {
-              width: drawerWidth,
-              boxSizing: 'border-box',
-              backgroundColor: '#4d0099', // Set background color to blue
-            },
-          }}
-          variant="persistent"
-          anchor="left"
-          open={open}
-        >
-          <DrawerHeader>
-
-          {isLoggedIn && (
-            <ListItem sx={{ padding: '16px', display: 'flex', justifyContent: 'center' }}>
-              <Avatar sx={{ width: 50, height: 50 }}></Avatar> {/* Profile icon */}
-            </ListItem>
-          )}
-
-            <IconButton onClick={handleDrawerClose}>
-              {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-            </IconButton>
-            
-
-          </DrawerHeader>
-          <Divider />
-     
-        </Drawer>
-        <Main open={open}>
-          <DrawerHeader />
-          <Routes>
-            <Route path="/" element={<Navigate to="/login" />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="*" element={<div>Error Page 404  Not found</div>} />
-
-            <Route
-              path="/dashboard"
-              element={isAuthenticated() ? <Dashboard /> : <Navigate to="/login" />}
-            />
-
-            <Route
-              path="/OverallSales"
-              element={isAuthenticated() ? <OverallSales /> : <Navigate to="/login" />}
-            />
-
-            <Route
-              path="/salesAgentwise"
-              element={isAuthenticated() ? <SalesAgentwise /> : <Navigate to="/login" />}
-            />
-
-            <Route
-              path="/tablePage"
-              element={isAuthenticated() ? <TablePage /> : <Navigate to="/login" />}
-            />
-
-              <Route
-                        path="/followup"
-                        element={isAuthenticated() ? <FollowUp /> : <Navigate to="/login" />}
-                      />
-
-            <Route
-              path="/salesAgentwise"
-              element={isAuthenticated() ? <QualityAndCompliance /> : <Navigate to="/login" />}
-            />
-
-
-            <Route
-              path="/admindashboard"
-              element={isAuthenticated() ? <AdminDashboard /> : <Navigate to="/login" />}
-            />
-
-            <Route
-              path="/create-user"
-              element={isAuthenticated()? <CreateUser /> : <Navigate to="/login" />}
-            />
-
-            <Route
-              path="/upload-leads"
-              element={isAuthenticated() ? <UploadLeads /> : <Navigate to="/login" />}
-            />
-
-            <Route
-              path="/leads"
-              element={isAuthenticated() ? <LeadsDashboard /> : <Navigate to="/login" />}
-            />
-
-
-            <Route
-              path="/paidCustomer"
-              element={isAuthenticated() ? <PaidCustomer /> : <Navigate to="/login" />}
-            />
-
-      
-            <Route path="*" element={<Navigate to="/login" />} />
-          </Routes>
-        </Main>
-      </Box>
-   
+  
   );
 }
 
