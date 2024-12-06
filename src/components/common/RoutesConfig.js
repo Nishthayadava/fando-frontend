@@ -10,7 +10,7 @@ import FollowUp from './FollowUp';
 import UploadLeads from './Admin/CSV/UploadLeads';
 
 
-const AuthenticatedRoute = ({ element, ...rest }) => {
+const RoutesConfig = ({ element, ...rest }) => {
   const isAuthenticated = !!localStorage.getItem('token');
   return (
     <Routes>
@@ -81,4 +81,4 @@ const AuthenticatedRoute = ({ element, ...rest }) => {
   );
 };
 
-export default AuthenticatedRoute;
+export default RoutesConfig;
