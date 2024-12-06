@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import axios from 'axios';
+import { Link, Navigate } from 'react-router-dom'; // Import Navigate here
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import FolderSpecialIcon from '@mui/icons-material/FolderSpecial';
@@ -31,20 +32,68 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 const Sidebar = ({ isLoggedIn, role }) => {
   const [open, setOpen] = useState(true); // Use the state for controlling the drawer
   const theme = useTheme(); // Initialize the theme using useTheme hook
+  const [isLoggedInState, setIsLoggedIn] = useState(isLoggedIn); // Track login state
+  const [roleState, setRole] = useState(role); // Track user role
+
 
   const handleDrawerClose = () => {
-    setOpen(false); // Close the drawer
+    setOpen(false);
   };
-  const handleLogout = () => {
-    // Logic to handle logout
-    localStorage.removeItem('token');
-    // Redirect to login or perform other logout actions
+  const handleLogin = async (userId) => {
+    try {
+      const response = await axios.post('/api/attendance/login', { userId });
+
+      if (response.status === 201) {
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('userId', response.data.userId);
+        localStorage.setItem('role', response.data.role); // Store role in localStorage
+        setIsLoggedIn(true);
+        setRole(response.data.role); // Update state with the role
+      }
+    } catch (error) {
+      console.error('Login failed:', error);
+    }
+  };
+  const handleLogout = async () => {
+    const userId = localStorage.getItem('userId'); // Get userId from localStorage
+    if (!userId) {
+      console.error('User is not logged in');
+      return;
+    }
+
+    try {
+      // Send a POST request to the backend to log out and update attendance
+      const response = await axios.post(
+        'http://localhost:5000/api/attendance/logout',
+        { userId }, // Send userId to backend to log out
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`, // Send token if needed
+          },
+        }
+      );
+
+      // Handle the success response
+      console.log('Logout success:', response.data);
+
+      // Clear localStorage
+      localStorage.removeItem('token');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('role');
+
+      // Update state to reflect the user is logged out
+      setIsLoggedIn(false);
+      setRole(null);
+
+      // Redirect to login page
+<Navigate to="/login" />
+    } catch (error) {
+      // Handle error during logout API call
+      console.error('Error logging out:', error);
+      alert('Error logging out. Please try again later.');
+    }
   };
 
-  const handleLogin = (userId) => {
-    // Logic for handling login (simulating login here)
-    localStorage.setItem('token', 'someToken'); // Save token for demo purposes
-  };
   return (
     <div>
             <Drawer
