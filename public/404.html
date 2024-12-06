@@ -5,11 +5,22 @@
     <title>Fando-Expert</title>
   </head>
   <body>
-    <script>
-      // Always redirect to index.html so React Router can handle the path
-       // Avoid redirecting if we are already on index.html (or any valid React route)
-      if (window.location.pathname !== '/') {
-        window.location.replace('/');
+ <script>
+      // Check if user is logged in and if a role exists in localStorage
+      const userRole = localStorage.getItem('role');
+
+      // Redirect based on the role stored in localStorage
+      if (userRole === 'Admin') {
+        // If role is Admin, redirect to /admindashboard
+        window.location.replace('/admindashboard');
+      } else if (userRole === 'Agent') {
+        // If role is Agent, redirect to /dashboard
+        window.location.replace('/dashboard');
+      } else {
+        // Default case: if no role is found, go to the homepage
+        if (window.location.pathname !== '/') {
+          window.location.replace('/');
+        }
       }
     </script>
   </body>
