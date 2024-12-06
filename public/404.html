@@ -5,19 +5,24 @@
     <title>Fando-Expert</title>
   </head>
   <body>
- <script>
-      // Check if user is logged in and if a role exists in localStorage
-      const userRole = localStorage.getItem('role');
+    <script>
+      // Retrieve the role from localStorage and sanitize it
+      let userRole = localStorage.getItem('role');
 
-      // Redirect based on the role stored in localStorage
-      if (userRole === 'Admin') {
+      // Ensure the role is trimmed of spaces and converted to lowercase
+      if (userRole) {
+        userRole = userRole.trim().toLowerCase();
+      }
+
+      // Redirect based on the sanitized role
+      if (userRole === 'admin') {
         // If role is Admin, redirect to /admindashboard
         window.location.replace('/admindashboard');
-      } else if (userRole === 'Agent') {
+      } else if (userRole === 'agent') {
         // If role is Agent, redirect to /dashboard
         window.location.replace('/dashboard');
       } else {
-        // Default case: if no role is found, go to the homepage
+        // Default case: if no valid role is found, go to the homepage
         if (window.location.pathname !== '/') {
           window.location.replace('/');
         }
