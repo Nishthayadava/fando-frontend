@@ -24,8 +24,6 @@ const Login = () => {
     const [error, setError] = useState(null); // To store error message if login fails
     const [success, setSuccess] = useState(false); // To track success login state
     const [rolest,setRole]=useState(null);
-    const navigate = useNavigate();
-
     const handleLogin = async () => {
         const { username, password } = credentials;
         const payload = { username, password };
@@ -60,17 +58,16 @@ const Login = () => {
             const tokenget = localStorage.getItem('token');
             const roleget = localStorage.getItem('role');
             const trimmedRole = roleget ? roleget.trim() : roleget; // Ensure roleget is not null or undefined
-                       alert("Login Success");
 
             // Navigate to the appropriate dashboard based on the role
-
             if (tokenget  && trimmedRole) {
+
             if (trimmedRole == 'Admin') {
-
-                navigate('/admindashboard'); // Redirect to admin dashboard
+    
+                window.location.replace('/admindashboard'); // Redirect to admin dashboard
+                // Redirect to admin dashboard
             } else if (trimmedRole == 'Agent'){
-           navigate('/dashboard'); // Redirect to agent dashboard
-
+            window.location.replace('/dashboard'); // Redirect to agent dashboard
             }
         }           
         } catch (error) {
