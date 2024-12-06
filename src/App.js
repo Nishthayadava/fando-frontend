@@ -1,17 +1,16 @@
-// App.js
 import React, { useState, useEffect } from 'react';
 import { Box, CssBaseline } from '@mui/material';
 import Sidebar from './components/common/Sidebar';
 import RoutesConfig from './components/common/RoutesConfig';
-import {  useLocation } from 'react-router-dom';  // <-- Import useLocation here
+import { useLocation, useNavigate } from 'react-router-dom';  // <-- Import useLocation and useNavigate
 
 import { styled, useTheme } from '@mui/material/styles';
 import Header from './components/common/Header'; // Import the Header component
 
-const drawerWidth = 240;
+const drawerWidth = 240; // Defining the drawerWidth constant
 
 // Rename custom styled AppBar to avoid conflict
-const StyledAppBar = styled('div', { shouldForwardProp: (prop) => prop !== 'open' })(
+const StyledAppBar = styled('div', { shouldForwardProp: (prop) => prop !== 'open' })( 
   ({ theme, open }) => ({
     flexGrow: 1,
     padding: theme.spacing(3),
@@ -19,7 +18,7 @@ const StyledAppBar = styled('div', { shouldForwardProp: (prop) => prop !== 'open
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
-    marginLeft: open ? 0 : `-${drawerWidth}px`,
+    marginLeft: open ? drawerWidth : 0, // Adjusting margin for the AppBar
   })
 );
 
@@ -29,41 +28,45 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
   const location = useLocation(); // Get the current location
+  const navigate = useNavigate(); // To redirect after login or logout
 
-  // Check if user is authenticated
-
+  const handleDrawerOpen = () => setOpen(true);
+  const handleDrawerClose = () => setOpen(false);
 
   // Ensure state is updated on initial load
   useEffect(() => {
     setIsLoggedIn(!!localStorage.getItem('token'));
     setRole(localStorage.getItem('role'));
     setLoading(false); // Stop loading after checking auth status
+
  
-
-
-  if (!isLoggedIn) {
-    // Store the path in localStorage before redirecting to login
-    if (location.pathname !== '/login') {
-      localStorage.setItem('redirectTo', location.pathname);
-    }
-  }
-}, [isLoggedIn, location]);
-
+  }, [isLoggedIn, location, navigate]);
 
   if (loading) return <div>Loading...</div>; // Avoid flickering until the auth state is resolved
 
   return (
-   
-      <Box sx={{ display: 'flex' }}>
-        <CssBaseline />
-        <Header /> {/* Use the Header component here */}
+    <Box sx={{ display: 'flex' }}>
+      {/* Sidebar */}
+      <Sidebar open={open} handleDrawerClose={handleDrawerClose} />
 
-        <Sidebar open={open} />
-        <StyledAppBar>
+      {/* Main content */}
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          bgcolor: 'background.default',
+          p: 3,
+          transition: 'margin-left 0.3s ease', // Smooth transition when the sidebar is toggled
+          marginTop: '64px', // Adjust for AppBar height
+        }}
+      >
+        <CssBaseline />
+        <Header handleDrawerOpen={handleDrawerOpen} handleDrawerClose={handleDrawerClose} open={open} />
+        <StyledAppBar open={open}>
           <RoutesConfig isLoggedIn={isLoggedIn} />
         </StyledAppBar>
       </Box>
-   
+    </Box>
   );
 }
 
