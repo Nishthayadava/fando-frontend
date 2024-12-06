@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';  // <-- Import useLocation here
+
 import { Container, TextField, Button, Typography, Paper, Alert } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
@@ -24,7 +26,7 @@ const Login = () => {
     const [error, setError] = useState(null); // To store error message if login fails
     const [success, setSuccess] = useState(false); // To track success login state
     const [rolest,setRole]=useState(null);
-        const navigate = useNavigate(); // <-- Use useNavigate to get the navigate function
+    const navigate = useNavigate(); // <-- Use useNavigate to get the navigate function
 
     const handleLogin = async () => {
         const { username, password } = credentials;
@@ -62,14 +64,14 @@ const Login = () => {
             const trimmedRole = roleget ? roleget.trim() : roleget; // Ensure roleget is not null or undefined
 
             // Navigate to the appropriate dashboard based on the role
-           // Navigate to the appropriate dashboard based on the role
-            if (tokenget && trimmedRole) {
-                if (trimmedRole === 'Admin') {
-                    navigate('/admindashboard'); // Redirect to admin dashboard
-                } else if (trimmedRole === 'Agent') {
-                    navigate('/dashboard'); // Redirect to agent dashboard
-                }
-            }          
+         // Navigate to the appropriate dashboard based on the role
+         if (tokenget && trimmedRole) {
+            if (trimmedRole === 'Admin') {
+                navigate('/admindashboard'); // Redirect to admin dashboard
+            } else if (trimmedRole === 'Agent') {
+                navigate('/dashboard'); // Redirect to agent dashboard
+            }
+        }
            // Step 5: Redirect to the saved route or home if no route was saved
       const redirectTo = localStorage.getItem('redirectTo') || '/'; // Default to home if no path
       localStorage.removeItem('redirectTo'); // Remove redirect path after redirection
