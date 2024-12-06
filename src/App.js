@@ -1,9 +1,10 @@
 // App.js
 import React, { useState, useEffect } from 'react';
 import { Box, CssBaseline } from '@mui/material';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Sidebar from './components/common/Sidebar';
 import RoutesConfig from './components/common/RoutesConfig';
+import {  useLocation } from 'react-router-dom';  // <-- Import useLocation here
+
 import { styled, useTheme } from '@mui/material/styles';
 import Header from './components/common/Header'; // Import the Header component
 
@@ -27,6 +28,7 @@ function App() {
   const [open, setOpen] = useState(true);
   const [loading, setLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
+  const location = useLocation(); // Get the current location
 
   // Check if user is authenticated
 
@@ -36,7 +38,17 @@ function App() {
     setIsLoggedIn(!!localStorage.getItem('token'));
     setRole(localStorage.getItem('role'));
     setLoading(false); // Stop loading after checking auth status
-  }, []);
+ 
+
+
+  if (!isLoggedIn) {
+    // Store the path in localStorage before redirecting to login
+    if (location.pathname !== '/login') {
+      localStorage.setItem('redirectTo', location.pathname);
+    }
+  }
+}, [isLoggedIn, location]);
+
 
   if (loading) return <div>Loading...</div>; // Avoid flickering until the auth state is resolved
 
