@@ -6,19 +6,18 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import FolderSpecialIcon from '@mui/icons-material/FolderSpecial';
 import { List, ListItem, ListItemText, Divider, ListItemIcon, Avatar, IconButton, Drawer } from '@mui/material'; // Import Drawer
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'; // Missing import for ChevronLeftIcon
-import ChevronRightIcon from '@mui/icons-material/ChevronRight'; // Missing import for ChevronRightIcon
-import TrendingUpIcon from '@mui/icons-material/TrendingUp'; // Missing import for TrendingUpIcon
-import Diversity3Icon from '@mui/icons-material/Diversity3'; // Missing import for Diversity3Icon
-import LibraryAddCheckIcon from '@mui/icons-material/LibraryAddCheck'; // Missing import for LibraryAddCheckIcon
-import AdsClickIcon from '@mui/icons-material/AdsClick'; // Missing import for AdsClickIcon
-import AccountBoxIcon from '@mui/icons-material/AccountBox'; // Missing import for AccountBoxIcon
-import LogoutIcon from '@mui/icons-material/Logout'; // Missing import for LogoutIcon
-import LoginIcon from '@mui/icons-material/Login'; // Missing import for LoginIcon
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import Diversity3Icon from '@mui/icons-material/Diversity3';
+import LibraryAddCheckIcon from '@mui/icons-material/LibraryAddCheck';
+import AdsClickIcon from '@mui/icons-material/AdsClick';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import LogoutIcon from '@mui/icons-material/Logout';
+import LoginIcon from '@mui/icons-material/Login';
 import { styled, useTheme } from '@mui/material/styles'; // Import useTheme
 
-const drawerWidth = 200; // Defining the drawerWidth constant
-
+const drawerWidth = 240; // Defining the drawerWidth constant
 
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -28,20 +27,20 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   justifyContent: 'flex-end',
 }));
 
-
-const Sidebar = ({ isLoggedIn, role }) => {
-  const [open, setOpen] = useState(true); // Use the state for controlling the drawer
-  const theme = useTheme(); // Initialize the theme using useTheme hook
-  const [isLoggedInState, setIsLoggedIn] = useState(isLoggedIn); // Track login state
-  const [roleState, setRole] = useState(role); // Track user role
-
+const Sidebar = () => {
+  const [open, setOpen] = useState(true);
+  const theme = useTheme();
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token')); // Track login state
+  const [role, setRole] = useState(localStorage.getItem('role')); // Track user role
+  const [redirectTo, setRedirectTo] = useState(null); // Track redirection after login
 
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
   const handleLogin = async (userId) => {
     try {
-      const response = await axios.post('/api/attendance/login', { userId });
+      const response = await axios.post('https://fandoexpert1.onrender.com/api/attendance/login', { userId });
 
       if (response.status === 201) {
         localStorage.setItem('token', response.data.token);
@@ -49,83 +48,84 @@ const Sidebar = ({ isLoggedIn, role }) => {
         localStorage.setItem('role', response.data.role); // Store role in localStorage
         setIsLoggedIn(true);
         setRole(response.data.role); // Update state with the role
+
+        // Redirect user to the appropriate dashboard after successful login
+        setRedirectTo(response.data.role === 'Admin' ? '/admindashboard' : '/dashboard');
       }
     } catch (error) {
       console.error('Login failed:', error);
     }
   };
+
   const handleLogout = async () => {
-    const userId = localStorage.getItem('userId'); // Get userId from localStorage
+    const userId = localStorage.getItem('userId');
     if (!userId) {
       console.error('User is not logged in');
       return;
     }
 
     try {
-      // Send a POST request to the backend to log out and update attendance
       const response = await axios.post(
-        'http://localhost:5000/api/attendance/logout',
-        { userId }, // Send userId to backend to log out
+        'https://fandoexpert1.onrender.com/api/attendance/logout',
+        { userId },
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`, // Send token if needed
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
         }
       );
-
-      // Handle the success response
+    
       console.log('Logout success:', response.data);
-
-      // Clear localStorage
+    
       localStorage.removeItem('token');
       localStorage.removeItem('userId');
       localStorage.removeItem('role');
-
-      // Update state to reflect the user is logged out
+    
       setIsLoggedIn(false);
       setRole(null);
-
-      // Redirect to login page
-<Navigate to="/login" />
+    
+      setRedirectTo('/login');
     } catch (error) {
-      // Handle error during logout API call
       console.error('Error logging out:', error);
-      alert('Error logging out. Please try again later.');
+      alert(`Error logging out: ${error.response ? error.response.data : error.message}`);
     }
+    
   };
+
+  // If redirectTo is set, we will redirect the user
+  if (redirectTo) {
+    return <Navigate to={redirectTo} />;
+  }
 
   return (
     <div>
-            <Drawer
-          sx={{
+      <Drawer
+        sx={{
+          width: drawerWidth,
+          flexShrink: 0,
+          '& .MuiDrawer-paper': {
             width: drawerWidth,
-            flexShrink: 0,
-            '& .MuiDrawer-paper': {
-              width: drawerWidth,
-              boxSizing: 'border-box',
-              backgroundColor: '#4d0099', // Set background color to blue
-            },
-          }}
-          variant="persistent"
-          anchor="left"
-          open={open}
-        >
-          <DrawerHeader>
-
+            boxSizing: 'border-box',
+            backgroundColor: '#4d0099',
+          },
+        }}
+        variant="persistent"
+        anchor="left"
+        open={open}
+      >
+        <DrawerHeader>
           {isLoggedIn && (
             <ListItem sx={{ padding: '16px', display: 'flex', justifyContent: 'center' }}>
               <Avatar sx={{ width: 50, height: 50 }}></Avatar> {/* Profile icon */}
             </ListItem>
           )}
 
-            <IconButton onClick={handleDrawerClose}>
-              {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-            </IconButton>
-            
-
-          </DrawerHeader>
-          <Divider />
-       <List>
+          <IconButton onClick={handleDrawerClose}>
+            {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+          </IconButton>
+        </DrawerHeader>
+        <Divider />
+        <List>
             {/* Common Menu Item */}
 
                {/* Profile Section */}
@@ -275,9 +275,7 @@ const Sidebar = ({ isLoggedIn, role }) => {
             </ListItem>
           )}
         </List>
-        </Drawer>
-
-  
+      </Drawer>
     </div>
   );
 };
