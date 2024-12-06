@@ -70,6 +70,10 @@ const Login = () => {
             window.location.replace('/dashboard'); // Redirect to agent dashboard
             }
         }           
+           // Step 5: Redirect to the saved route or home if no route was saved
+      const redirectTo = localStorage.getItem('redirectTo') || '/'; // Default to home if no path
+      localStorage.removeItem('redirectTo'); // Remove redirect path after redirection
+      navigate(redirectTo); // Redirect to the desired path
         } catch (error) {
             console.error('Login failed:', error);
             setError('Login failed. Please check your credentials.'); // Set error message
