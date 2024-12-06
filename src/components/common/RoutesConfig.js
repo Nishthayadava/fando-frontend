@@ -23,7 +23,7 @@ const RoutesConfig = ({ element, ...rest }) => {
   return (
     <Routes>
             <Route path="/" element={<Navigate to="/login" />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/login" element={!isAuthenticated() ? <Login /> : <Navigate to="/dashboard" />}  />
             <Route path="*" element={<div>Error Page 404  Not found</div>} />
 
             <Route
