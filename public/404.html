@@ -16,6 +16,8 @@
 
       // Check the current page and redirect only if necessary
       const currentPath = window.location.pathname;
+      console.log(userRole);
+            console.log(currentPath);
 
       if (userRole === 'admin' && currentPath !== '/admindashboard') {
         // If role is Admin and we are not already on the admin dashboard, redirect to it
