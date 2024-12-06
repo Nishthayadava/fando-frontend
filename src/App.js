@@ -1,35 +1,17 @@
+// App.js
 import React, { useState, useEffect } from 'react';
-import { Box, CssBaseline, IconButton, Toolbar } from '@mui/material';
+import { Box, CssBaseline, IconButton } from '@mui/material';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import RoutesConfig from './components/RoutesConfig';
-import MenuIcon from '@mui/icons-material/Menu';
 import { styled, useTheme } from '@mui/material/styles';
-import { AppBar as MuiAppBar, Drawer } from '@mui/material'; // Import original AppBar as MuiAppBar
 import { useNavigate } from 'react-router-dom';
+import Header from './components/Header'; // Import the Header component
 
 const drawerWidth = 240;
 
 // Rename custom styled AppBar to avoid conflict
-const StyledAppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== 'open',
-})(({ theme, open }) => ({
-  transition: theme.transitions.create(['margin', 'width'], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  ...(open && {
-    width: `calc(100% - ${drawerWidth}px)`,
-    marginLeft: `${drawerWidth}px`,
-    transition: theme.transitions.create(['margin', 'width'], {
-      easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  }),
-  backgroundColor: '#4d0099',
-}));
-
-const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
+const StyledAppBar = styled('div', { shouldForwardProp: (prop) => prop !== 'open' })(
   ({ theme, open }) => ({
     flexGrow: 1,
     padding: theme.spacing(3),
@@ -66,18 +48,12 @@ function App() {
     <Router>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
-        <StyledAppBar position="fixed" open={open}>
-          <Toolbar>
-            <IconButton edge="start" color="inherit" aria-label="menu" onClick={() => setOpen(!open)}>
-              <MenuIcon />
-            </IconButton>
-          </Toolbar>
-        </StyledAppBar>
+        <Header /> {/* Use the Header component here */}
 
         <Sidebar open={open} />
-        <Main open={open}>
+        <StyledAppBar>
           <RoutesConfig isLoggedIn={isLoggedIn} />
-        </Main>
+        </StyledAppBar>
       </Box>
     </Router>
   );
