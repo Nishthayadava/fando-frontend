@@ -1,5 +1,14 @@
 import React from 'react';
-import { Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import Dashboard from './Dashboard';
+import PaidCustomer from './PaidCustomer';
+import OverallSales from './OverallSales';
+import SalesAgentwise from './SalesAgentwise';
+import CreateUser from './CreateUser';
+import Login from './Login';
+import FollowUp from './FollowUp';
+import UploadLeads from './Admin/CSV/UploadLeads';
+
 
 const AuthenticatedRoute = ({ element, ...rest }) => {
   const isAuthenticated = !!localStorage.getItem('token');
