@@ -1,17 +1,25 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import Dashboard from './Dashboard';
-import PaidCustomer from './PaidCustomer';
-import OverallSales from './OverallSales';
-import SalesAgentwise from './SalesAgentwise';
-import CreateUser from './CreateUser';
-import Login from './Login';
-import FollowUp from './FollowUp';
-import UploadLeads from './Admin/CSV/UploadLeads';
+import Dashboard from '../Dashboard';
+import PaidCustomer from '../PaidCustomer';
+import OverallSales from '../OverallSales';
+import SalesAgentwise from '../SalesAgentwise';
+import CreateUser from '../CreateUser';
+import Login from '../Login';
+import FollowUp from '../Agent/Lead/FollowUp';
+import UploadLeads from '../Admin/CSV/UploadLeads';
+import TablePage from '../TablePage'; // Import missing TablePage component
+import QualityAndCompliance from '../QualityAndComplaince'; // Import missing QualityAndCompliance component
+import AdminDashboard from '../Admin/AdminDashboard'; // Import missing AdminDashboard component
+import LeadsDashboard from '../Agent/Lead/LeadsDashboard'; // Import missing LeadsDashboard component
 
 
 const RoutesConfig = ({ element, ...rest }) => {
-  const isAuthenticated = !!localStorage.getItem('token');
+
+  const isAuthenticated = () => {
+    return !!localStorage.getItem('token'); // Check if token exists
+  };
+
   return (
     <Routes>
             <Route path="/" element={<Navigate to="/login" />} />
