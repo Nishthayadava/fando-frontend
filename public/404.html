@@ -14,18 +14,18 @@
         userRole = userRole.trim().toLowerCase();
       }
 
-      // Redirect based on the sanitized role
-      if (userRole === 'admin') {
-        // If role is Admin, redirect to /admindashboard
+      // Check the current page and redirect only if necessary
+      const currentPath = window.location.pathname;
+
+      if (userRole === 'admin' && currentPath !== '/admindashboard') {
+        // If role is Admin and we are not already on the admin dashboard, redirect to it
         window.location.replace('/admindashboard');
-      } else if (userRole === 'agent') {
-        // If role is Agent, redirect to /dashboard
+      } else if (userRole === 'agent' && currentPath !== '/dashboard') {
+        // If role is Agent and we are not already on the agent dashboard, redirect to it
         window.location.replace('/dashboard');
-      } else {
-        // Default case: if no valid role is found, go to the homepage
-        if (window.location.pathname !== '/') {
-          window.location.replace('/');
-        }
+      } else if (currentPath !== '/') {
+        // If the role is not found or it's an unknown role, and we're not on the home page, go to the home page
+        window.location.replace('/');
       }
     </script>
   </body>
