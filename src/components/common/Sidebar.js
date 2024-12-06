@@ -16,7 +16,7 @@ import LogoutIcon from '@mui/icons-material/Logout'; // Missing import for Logou
 import LoginIcon from '@mui/icons-material/Login'; // Missing import for LoginIcon
 import { styled, useTheme } from '@mui/material/styles'; // Import useTheme
 
-const drawerWidth = 240; // Defining the drawerWidth constant
+const drawerWidth = 200; // Defining the drawerWidth constant
 
 
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -85,8 +85,8 @@ const Sidebar = ({ isLoggedIn, role }) => {
         
 
             {/* Conditional Menu Items based on Role */}
-            {role === 'Admin' && (
-              <>
+            {/* {role === 'Admin' && (
+              <> */}
                 <ListItem button component={Link} to="/admindashboard" sx={{ color: 'white' }}>
                   <ListItemIcon>
                     <DashboardIcon sx={{ color: 'white' }}/>
@@ -146,11 +146,11 @@ const Sidebar = ({ isLoggedIn, role }) => {
                   <ListItemText primary="Quality And Compliance" />
                 </ListItem>
 
-              </>
-            )} 
+              {/* </>
+            )} */}
 
-            {role === 'Agent' && (
-              <>
+            {/* {role === 'Agent' && (
+              <> */}
               <ListItem button component={Link} to="/dashboard" sx={{ color: 'white' }}>
               <ListItemIcon>
                 <DashboardIcon  sx={{ color: 'white' }}/>
@@ -205,9 +205,9 @@ const Sidebar = ({ isLoggedIn, role }) => {
                   <ListItemText primary="Quality And Compliance" />
                 </ListItem>
               
-               </>
+              {/* </>
               
-            )} 
+            )} */}
 
             {/* Login/Logout */}
             {isLoggedIn ? (
