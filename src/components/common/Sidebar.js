@@ -1,15 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import FolderSpecialIcon from '@mui/icons-material/FolderSpecial';
-import { List, ListItem, ListItemText, Divider, ListItemIcon, Avatar, IconButton } from '@mui/material';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import SalesIcon from '@mui/icons-material/AdsClick';
+import { List, ListItem, ListItemText, Divider, ListItemIcon, Avatar, IconButton, Drawer } from '@mui/material'; // Import Drawer
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import { useState } from 'react';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'; // Missing import for ChevronLeftIcon
+import ChevronRightIcon from '@mui/icons-material/ChevronRight'; // Missing import for ChevronRightIcon
+import TrendingUpIcon from '@mui/icons-material/TrendingUp'; // Missing import for TrendingUpIcon
+import Diversity3Icon from '@mui/icons-material/Diversity3'; // Missing import for Diversity3Icon
+import LibraryAddCheckIcon from '@mui/icons-material/LibraryAddCheck'; // Missing import for LibraryAddCheckIcon
+import AdsClickIcon from '@mui/icons-material/AdsClick'; // Missing import for AdsClickIcon
+import AccountBoxIcon from '@mui/icons-material/AccountBox'; // Missing import for AccountBoxIcon
+import LogoutIcon from '@mui/icons-material/Logout'; // Missing import for LogoutIcon
+import LoginIcon from '@mui/icons-material/Login'; // Missing import for LoginIcon
+import { styled, useTheme } from '@mui/material/styles'; // Import useTheme
 
+const drawerWidth = 240; // Defining the drawerWidth constant
 
 
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -22,8 +29,22 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 
 const Sidebar = ({ isLoggedIn, role }) => {
-    const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
+  const [open, setOpen] = useState(true); // Use the state for controlling the drawer
+  const theme = useTheme(); // Initialize the theme using useTheme hook
 
+  const handleDrawerClose = () => {
+    setOpen(false); // Close the drawer
+  };
+  const handleLogout = () => {
+    // Logic to handle logout
+    localStorage.removeItem('token');
+    // Redirect to login or perform other logout actions
+  };
+
+  const handleLogin = (userId) => {
+    // Logic for handling login (simulating login here)
+    localStorage.setItem('token', 'someToken'); // Save token for demo purposes
+  };
   return (
     <div>
             <Drawer
