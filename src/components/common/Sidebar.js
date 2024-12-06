@@ -85,8 +85,8 @@ const Sidebar = ({ isLoggedIn, role }) => {
         
 
             {/* Conditional Menu Items based on Role */}
-            {/* {role === 'Admin' && (
-              <> */}
+            {role === 'Admin' && (
+              <>
                 <ListItem button component={Link} to="/admindashboard" sx={{ color: 'white' }}>
                   <ListItemIcon>
                     <DashboardIcon sx={{ color: 'white' }}/>
@@ -146,11 +146,11 @@ const Sidebar = ({ isLoggedIn, role }) => {
                   <ListItemText primary="Quality And Compliance" />
                 </ListItem>
 
-              {/* </>
-            )} */}
+              </>
+            )} 
 
-            {/* {role === 'Agent' && (
-              <> */}
+            {role === 'Agent' && (
+              <>
               <ListItem button component={Link} to="/dashboard" sx={{ color: 'white' }}>
               <ListItemIcon>
                 <DashboardIcon  sx={{ color: 'white' }}/>
@@ -205,27 +205,27 @@ const Sidebar = ({ isLoggedIn, role }) => {
                   <ListItemText primary="Quality And Compliance" />
                 </ListItem>
               
-              {/* </>
+               </>
               
-            )} */}
+            )} 
 
             {/* Login/Logout */}
             {isLoggedIn ? (
-              <ListItem button onClick={handleLogout} component={Link} to="/login" sx={{ color: 'white' }}>
-                <ListItemIcon>
-                  <LogoutIcon sx={{ color: 'white' }}/>
-                </ListItemIcon>
-                <ListItemText primary="Logout" />
-              </ListItem>
-            ) : (
-              <ListItem button onClick={() => handleLogin('testUserId')} component={Link} to="/login" sx={{ color: 'white' }}>
-                <ListItemIcon>
-                  <LoginIcon sx={{ color: 'white' }}/>
-                </ListItemIcon>
-                <ListItemText primary="Login" />
-              </ListItem>
-            )}
-          </List>
+            <ListItem button onClick={handleLogout} component={Link} to="/login" sx={{ color: 'white' }}>
+              <ListItemIcon>
+                <LogoutIcon sx={{ color: 'white' }} />
+              </ListItemIcon>
+              <ListItemText primary="Logout" />
+            </ListItem>
+          ) : (
+            <ListItem button onClick={() => handleLogin('testUserId')} component={Link} to="/login" sx={{ color: 'white' }}>
+              <ListItemIcon>
+                <LoginIcon sx={{ color: 'white' }} />
+              </ListItemIcon>
+              <ListItemText primary="Login" />
+            </ListItem>
+          )}
+        </List>
         </Drawer>
 
   
