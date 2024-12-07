@@ -5,7 +5,9 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'; // Close Drawer I
 
 const Header = ({ handleDrawerOpen, handleDrawerClose, open }) => {
   return (
-    <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+    <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 ,
+                backgroundColor: '#4d0099',
+              }}>
       <Toolbar>
         {/* Open drawer button */}
         {!open && (
