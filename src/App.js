@@ -47,7 +47,7 @@ function App() {
   return (
     <Box sx={{ display: 'flex' }}>
       {/* Sidebar */}
-      <Sidebar open={open} handleDrawerClose={handleDrawerClose} />
+      <Sidebar open={open} handleDrawerClose={handleDrawerClose} isLoggedIn={isLoggedIn} role={role} setIsLoggedIn={setIsLoggedIn} setRole={setRole} />
 
       {/* Main content */}
       <Box
