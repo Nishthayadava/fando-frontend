@@ -1,73 +1,270 @@
-import React, { useState, useEffect } from 'react';
-import { Box, CssBaseline } from '@mui/material';
-import Sidebar from './components/common/Sidebar';
-import RoutesConfig from './components/common/RoutesConfig';
-import { useLocation, useNavigate } from 'react-router-dom';  // <-- Import useLocation and useNavigate
+import React, { useState,useEffect } from 'react';
+import axios from 'axios';
+import { List, ListItem, ListItemText, Divider, ListItemIcon, Avatar,ListItemButton, Typography,Box , Drawer } from '@mui/material'; // Import Drawer components
+import { styled } from '@mui/material/styles'; // Import useTheme
+import { useNavigate } from 'react-router-dom';
+import {handleLogin, handleLogout } from './AuthHandler';
 
-import { styled, useTheme } from '@mui/material/styles';
-import Header from './components/common/Header'; // Import the Header component
+import {
+  Dashboard as DashboardIcon,
+  PersonAdd as PersonAddIcon,
+  FolderSpecial as FolderSpecialIcon,
+  ZoomIn as ZoomInIcon,
+  TrendingUp as TrendingUpIcon,
+  Diversity3 as Diversity3Icon,
+  LibraryAddCheck as LibraryAddCheckIcon,
+  AdsClick as AdsClickIcon,
+  AccountBox as AccountBoxIcon,
+  Logout as LogoutIcon,
+  Login as LoginIcon
+} from '@mui/icons-material';
 
-const drawerWidth = 240; // Defining the drawerWidth constant
 
-// Rename custom styled AppBar to avoid conflict
-const StyledAppBar = styled('div', { shouldForwardProp: (prop) => prop !== 'open' })( 
-  ({ theme, open }) => ({
-    flexGrow: 1,
-    padding: theme.spacing(3),
-    transition: theme.transitions.create('margin', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-    marginLeft: open ? drawerWidth : 0, // Adjusting margin for the AppBar
-  })
-);
 
-function App() {
-  const [role, setRole] = useState(localStorage.getItem('role'));
-  const [open, setOpen] = useState(true);
-  const [loading, setLoading] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
-  const location = useLocation(); // Get the current location
-  const navigate = useNavigate(); // To redirect after login or logout
+const DrawerHeader = styled('div')(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',  // Vertically center the content
+  justifyContent: 'flex-start',  // Align the items at the start horizontally
+  width: '100%',  // Ensure the content fills the available space
+  marginTop: theme.spacing(10),
+  marginBottom: theme.spacing(4),
+  paddingLeft:  theme.spacing(4),
+}));
 
-  const handleDrawerOpen = () => setOpen(true);
-  const handleDrawerClose = () => setOpen(false);
 
-  // Ensure state is updated on initial load
-  useEffect(() => {
-    setIsLoggedIn(!!localStorage.getItem('token'));
-    setRole(localStorage.getItem('role'));
-    setLoading(false); // Stop loading after checking auth status
-
+const Sidebar = ({ open, handleDrawerClose, isLoggedIn, role, setIsLoggedIn, setRole }) => {
  
-  }, [isLoggedIn, location, navigate]);
+  const navigate = useNavigate();
+ // State to hold user profile data
+ const [userProfile, setUserProfile] = useState({
+  name: '',
+  role: ''
+});
+   // Fetch user profile data
+   useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      const userId = localStorage.getItem('userId');
+      axios
+        .get(`https://fandoexpert1.onrender.com/api/getuserprofile/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          const { name, role } = response.data;
+          setUserProfile({ name, role });
+        })
+        .catch((error) => {
+          console.error('Error fetching user profile:', error);
+        });
+    }
+  }, [isLoggedIn]); // Fetch profile when login status changes
 
-  if (loading) return <div>Loading...</div>; // Avoid flickering until the auth state is resolved
+  const handleNavigate = (route) => {
+    navigate(route);
+    handleDrawerClose(); // Close the drawer after navigation
+  };
+
+
+  const handleLoginButtonClick = () => {
+    const userId = localStorage.getItem('userId');
+    handleLogin(userId, setIsLoggedIn, setRole, handleNavigate);
+  };
+
+  const handleLogoutButtonClick = () => {
+    handleLogout(setIsLoggedIn, setRole, navigate);
+  };
+  useEffect(() => {
+    // Sync state with localStorage whenever the `isLoggedIn` or `role` state changes
+    const token = localStorage.getItem('token');
+    const userRole = localStorage.getItem('role');
+    if (token && userRole) {
+      setIsLoggedIn(true);
+      setRole(userRole);
+    }
+  }, [isLoggedIn, role, setIsLoggedIn, setRole]); // Runs when login/logout occurs
 
   return (
-    <Box sx={{ display: 'flex' }}>
-      {/* Sidebar */}
-      <Sidebar open={open} handleDrawerClose={handleDrawerClose} isLoggedIn={isLoggedIn} role={role} setIsLoggedIn={setIsLoggedIn} setRole={setRole} />
+    <div>
+       <Drawer
+      sx={{
+        flexShrink: 0,
 
-      {/* Main content */}
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          bgcolor: 'background.default',
-          p: 3,
-          transition: 'margin-left 0.3s ease', // Smooth transition when the sidebar is toggled
-          marginTop: '64px', // Adjust for AppBar height
-        }}
-      >
-        <CssBaseline />
-        <Header handleDrawerOpen={handleDrawerOpen} handleDrawerClose={handleDrawerClose} open={open} />
-        <StyledAppBar open={open}>
-          <RoutesConfig isLoggedIn={isLoggedIn} />
-        </StyledAppBar>
-      </Box>
-    </Box>
+        '& .MuiDrawer-paper': {
+          width: 240,
+          backgroundColor: '#4d0099', // Dark theme for sidebar
+          color: '#fff',
+          border: 'none',
+          boxShadow: '0 2px 10px rgba(0, 0, 0, 0.2)',
+          borderRadius: '8px',
+          transition: '0.3s ease-in-out',
+        },
+      }}
+      variant="persistent"
+      anchor="left"
+      open={open}
+      onClose={handleDrawerClose}
+    >
+         <DrawerHeader>
+          <Avatar sx={{ width: 40, height: 40, backgroundColor: '#fff', color: '#4d0099' }}>
+            {userProfile.name ? userProfile.name.charAt(0).toUpperCase() : 'U'}
+          </Avatar>
+          <Box sx={{ ml: 2 }}>
+            <Typography variant="h6" color="white">
+              {userProfile.name || 'User'}
+            </Typography>
+            <Typography variant="body2" color="white">
+              {userProfile.role || 'Role'}
+            </Typography>
+          </Box>
+        </DrawerHeader>
+      <Divider sx={{ backgroundColor: '#fff' }} />
+        <List>
+  {/* Common Menu Item */}
+
+  {/* Profile Section */}
+  <ListItem>
+    <ListItemButton onClick={() => handleNavigate('/dashboard')}>
+      <ListItemIcon><DashboardIcon sx={{ color: 'white' }} /></ListItemIcon>
+      <ListItemText primary="Dashboard" />
+    </ListItemButton>
+  </ListItem>
+
+
+      <ListItem>
+        <ListItemButton onClick={() => handleNavigate('/admindashboard')}>
+          <ListItemIcon><DashboardIcon sx={{ color: 'white' }} /></ListItemIcon>
+          <ListItemText primary="Admin Dashboard" />
+        </ListItemButton>
+      </ListItem>
+
+      <ListItem>
+        <ListItemButton onClick={() => handleNavigate('/upload-leads')}>
+          <ListItemIcon><FolderSpecialIcon sx={{ color: 'white' }} /></ListItemIcon>
+          <ListItemText primary="Upload Leads" />
+        </ListItemButton>
+      </ListItem>
+
+      <ListItem>
+        <ListItemButton onClick={() => handleNavigate('/paidCustomer')}>
+          <ListItemIcon><PersonAddIcon sx={{ color: 'white' }} /></ListItemIcon>
+          <ListItemText primary="Paid Customer" />
+        </ListItemButton>
+      </ListItem>
+
+      <ListItem>
+        <ListItemButton onClick={() => handleNavigate('/tablePage')}>
+          <ListItemIcon><PersonAddIcon sx={{ color: 'white' }} /></ListItemIcon>
+          <ListItemText primary="User Consent" />
+        </ListItemButton>
+      </ListItem>
+
+      <ListItem>
+        <ListItemButton onClick={() => handleNavigate('/OverallSales')}>
+          <ListItemIcon><TrendingUpIcon sx={{ color: 'white' }} /></ListItemIcon>
+          <ListItemText primary="Overall Sales" />
+        </ListItemButton>
+      </ListItem>
+
+      <ListItem>
+        <ListItemButton onClick={() => handleNavigate('/salesAgentwise')}>
+          <ListItemIcon><Diversity3Icon sx={{ color: 'white' }} /></ListItemIcon>
+          <ListItemText primary="Sales Agentwise" />
+        </ListItemButton>
+      </ListItem>
+
+      <ListItem>
+        <ListItemButton onClick={() => handleNavigate('/create-user')}>
+          <ListItemIcon><PersonAddIcon sx={{ color: 'white' }} /></ListItemIcon>
+          <ListItemText primary="Create User" />
+        </ListItemButton>
+      </ListItem>
+
+      <ListItem>
+        <ListItemButton onClick={() => handleNavigate('/qualityAndComplaince')}>
+          <ListItemIcon><LibraryAddCheckIcon sx={{ color: 'white' }} /></ListItemIcon>
+          <ListItemText primary="Quality And Compliance" />
+        </ListItemButton>
+      </ListItem>
+
+
+      <ListItem>
+        <ListItemButton onClick={() => handleNavigate('/dashboard')}>
+          <ListItemIcon><DashboardIcon sx={{ color: 'white' }} /></ListItemIcon>
+          <ListItemText primary="Dashboard" />
+        </ListItemButton>
+      </ListItem>
+
+      <ListItem>
+        <ListItemButton onClick={() => handleNavigate('/leads')}>
+          <ListItemIcon><AdsClickIcon sx={{ color: 'white' }} /></ListItemIcon>
+          <ListItemText primary="Leads" />
+        </ListItemButton>
+      </ListItem>
+
+      <ListItem>
+        <ListItemButton onClick={() => handleNavigate('/paidCustomer')}>
+          <ListItemIcon><AccountBoxIcon sx={{ color: 'white' }} /></ListItemIcon>
+          <ListItemText primary="Paid Customer" />
+        </ListItemButton>
+      </ListItem>
+
+      <ListItem>
+        <ListItemButton onClick={() => handleNavigate('/tablePage')}>
+          <ListItemIcon><PersonAddIcon sx={{ color: 'white' }} /></ListItemIcon>
+          <ListItemText primary="User Consent" />
+        </ListItemButton>
+      </ListItem>
+
+      <ListItem>
+        <ListItemButton onClick={() => handleNavigate('/followup')}>
+          <ListItemIcon><ZoomInIcon sx={{ color: 'white' }} /></ListItemIcon>
+          <ListItemText primary="Follow Up" />
+        </ListItemButton>
+      </ListItem>
+
+      <ListItem>
+        <ListItemButton onClick={() => handleNavigate('/salesAgentwise')}>
+          <ListItemIcon><Diversity3Icon sx={{ color: 'white' }} /></ListItemIcon>
+          <ListItemText primary="Sales Agentwise" />
+        </ListItemButton>
+      </ListItem>
+
+      <ListItem>
+        <ListItemButton onClick={() => handleNavigate('/qualityAndComplaince')}>
+          <ListItemIcon><LibraryAddCheckIcon sx={{ color: 'white' }} /></ListItemIcon>
+          <ListItemText primary="Quality And Compliance" />
+        </ListItemButton>
+      </ListItem>
+  
+
+  {/* Login/Logout */}
+  {isLoggedIn ? (
+    <ListItem>
+      <ListItemButton onClick={handleLogoutButtonClick}>
+        <ListItemIcon><LogoutIcon sx={{ color: 'white' }} /></ListItemIcon>
+        <ListItemText primary="Logout" />
+      </ListItemButton>
+    </ListItem>
+  ) : (
+    <ListItem>
+    <ListItemButton onClick={() => handleLoginButtonClick}>
+    <ListItemIcon><LoginIcon sx={{ color: 'white' }} /></ListItemIcon>
+        <ListItemText primary="Login" />
+      </ListItemButton>
+    </ListItem>
+  )}
+</List>
+
+      </Drawer>
+    </div>
   );
-}
+};
 
-export default App;
+export default Sidebar;
+
+
+
+
+
