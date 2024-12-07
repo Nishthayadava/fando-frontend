@@ -35,8 +35,32 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 const Sidebar = ({ open, handleDrawerClose, isLoggedIn, role, setIsLoggedIn, setRole }) => {
  
   const navigate = useNavigate();
+ // State to hold user profile data
+ const [userProfile, setUserProfile] = useState({
+  name: '',
+  role: ''
+});
+   // Fetch user profile data
+   useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      const userId = localStorage.getItem('userId');
+      axios
+        .get(`https://fandoexpert1.onrender.com/api/getuserprofile/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          const { name, role } = response.data;
+          setUserProfile({ name, role });
+        })
+        .catch((error) => {
+          console.error('Error fetching user profile:', error);
+        });
+    }
+  }, [isLoggedIn]); // Fetch profile when login status changes
 
- 
   const handleNavigate = (route) => {
     navigate(route);
     handleDrawerClose(); // Close the drawer after navigation
@@ -83,11 +107,18 @@ const Sidebar = ({ open, handleDrawerClose, isLoggedIn, role, setIsLoggedIn, set
       onClose={handleDrawerClose}
     >
          <DrawerHeader>
-        <Avatar sx={{ width: 40, height: 40, backgroundColor: '#fff', color: '#4d0099' }}>U</Avatar>
-        <Box sx={{ ml: 2 }}>
-          <Typography variant="h6" color="white">User</Typography>
-        </Box>
-      </DrawerHeader>
+          <Avatar sx={{ width: 40, height: 40, backgroundColor: '#fff', color: '#4d0099' }}>
+            {userProfile.name ? userProfile.name.charAt(0).toUpperCase() : 'U'}
+          </Avatar>
+          <Box sx={{ ml: 2 }}>
+            <Typography variant="h6" color="white">
+              {userProfile.name || 'User'}
+            </Typography>
+            <Typography variant="body2" color="white">
+              {userProfile.role || 'Role'}
+            </Typography>
+          </Box>
+        </DrawerHeader>
       <Divider sx={{ backgroundColor: '#fff' }} />
         <List>
   {/* Common Menu Item */}
