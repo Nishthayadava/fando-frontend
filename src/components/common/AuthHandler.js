@@ -53,6 +53,22 @@ const handleLogout =async (setIsLoggedIn, setRole, navigate) => {
     navigate('/login');  // Use the path for your login page
 
   } catch (error) {
+    const existingToken = localStorage.getItem('token');
+        if (existingToken) {
+            localStorage.removeItem('token');
+        }
+        const existinguser = localStorage.getItem('userId');
+        if (existinguser) {
+            localStorage.removeItem('userId');
+        }
+        const existingrole = localStorage.getItem('role');
+        if (existingrole) {
+            localStorage.removeItem('role');
+        }
+        const existingref = localStorage.getItem('refreshToken');
+        if (existingref) {
+            localStorage.removeItem('refreshToken');
+        }
     console.error('Error logging out:', error);
     alert('Error logging out. Please try again later.');
   }
