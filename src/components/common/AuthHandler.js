@@ -69,8 +69,9 @@ const handleLogout =async (setIsLoggedIn, setRole, navigate) => {
         if (existingref) {
             localStorage.removeItem('refreshToken');
         }
+    navigate('/login');  // Use the path for your login page
     console.error('Error logging out:', error);
-    alert('Error logging out. Please try again later.');
+    alert('Your session has been expired. since you were inactive.');
   }
 };
 
