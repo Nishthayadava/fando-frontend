@@ -5,6 +5,8 @@ import PaidCustomer from '../PaidCustomer';
 import OverallSales from '../OverallSales';
 import SalesAgentwise from '../SalesAgentwise';
 import CreateUser from '../CreateUser';
+import UserConsent from '../common_component/UserConsent';
+
 import Login from '../Login';
 import FollowUp from '../Agent/Lead/FollowUp';
 import UploadLeads from '../Admin/CSV/UploadLeads';
@@ -83,7 +85,10 @@ const RoutesConfig = ({ element, ...rest }) => {
               element={isAuthenticated() ? <PaidCustomer /> : <Navigate to="/login" />}
             />
 
-      
+         <Route
+              path="/userconsent"
+              element={isAuthenticated() ? <UserConsent /> : <Navigate to="/login" />}
+            />
             <Route path="*" element={<Navigate to="/login" />} />
           </Routes>
   );
