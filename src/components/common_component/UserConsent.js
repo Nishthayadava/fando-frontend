@@ -51,9 +51,7 @@ function UserConsent() {
 
     return (
         <Box sx={{ padding: 4, fontFamily: 'Arial, sans-serif', backgroundColor: '#f9f9f9', minHeight: '100vh' }}>
-            <Typography variant="h4" align="center" gutterBottom>
-                User Consent
-            </Typography>
+    
             {webhookData.length === 0 ? (
                 <Box display="flex" justifyContent="center" alignItems="center" height="60vh">
                     <CircularProgress />
