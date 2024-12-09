@@ -39,6 +39,8 @@ function UserConsent() {
         socket.on('update', (data) => {
             console.log('Data received:', data);
             setWebhookData(data); // Update state with new data
+            // Update the state with the new data while ensuring the existing state is maintained
+            return data;
         });
 
         // Cleanup on unmount
@@ -88,14 +90,15 @@ function UserConsent() {
                                         <Button
                                             variant="contained"
                                             sx={{
-                                                backgroundColor: entry.secondConfirmationSent ? 'green' : 'red',
+                                                backgroundColor: entry.second_confirmation_sent ? 'green' : 'red',
                                                 color: 'white',
                                                 '&:hover': {
-                                                    backgroundColor: entry.secondConfirmationSent ? 'darkgreen' : 'darkred',
+                                                    backgroundColor: entry.second_confirmation_sent ? 'darkgreen' : 'darkred',
                                                 },
                                             }}
                                         >
-                                            {entry.secondConfirmationSent ? 'Agreed' : 'Pending'}
+                                     
+                                            {entry.second_confirmation_sent ? 'Agreed' : 'Pending'}
                                         </Button>
                                     </TableCell>
                                 </TableRow>
