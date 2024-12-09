@@ -30,7 +30,7 @@
     "web-vitals": "^2.1.4",
     "webpack": "^5.96.1",
     "webpack-dev-server": "^4.15.2",
-        "socket.io-client": "^4.8.1",
+        "socket.io-client": "^4.8.1"
 
   },
   "scripts": {
