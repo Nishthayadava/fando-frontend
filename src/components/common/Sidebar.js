@@ -132,12 +132,12 @@ const Sidebar = ({ open, handleDrawerClose, isLoggedIn, role, setIsLoggedIn, set
   </ListItem>
 
 
-      <ListItem>
-        <ListItemButton onClick={() => handleNavigate('/admindashboard')}>
-          <ListItemIcon><DashboardIcon sx={{ color: 'white' }} /></ListItemIcon>
-          <ListItemText primary="Admin Dashboard" />
-        </ListItemButton>
-      </ListItem>
+      // <ListItem>
+      //   <ListItemButton onClick={() => handleNavigate('/admindashboard')}>
+      //     <ListItemIcon><DashboardIcon sx={{ color: 'white' }} /></ListItemIcon>
+      //     <ListItemText primary="Admin Dashboard" />
+      //   </ListItemButton>
+      // </ListItem>
 
       <ListItem>
         <ListItemButton onClick={() => handleNavigate('/upload-leads')}>
