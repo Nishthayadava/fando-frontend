@@ -218,12 +218,7 @@ const Sidebar = ({ open, handleDrawerClose, isLoggedIn, role, setIsLoggedIn, set
         </ListItemButton>
       </ListItem>
 
-      <ListItem>
-        <ListItemButton onClick={() => handleNavigate('/tablePage')}>
-          <ListItemIcon><PersonAddIcon sx={{ color: 'white' }} /></ListItemIcon>
-          <ListItemText primary="User Consent" />
-        </ListItemButton>
-      </ListItem>
+  
 
       <ListItem>
         <ListItemButton onClick={() => handleNavigate('/followup')}>
