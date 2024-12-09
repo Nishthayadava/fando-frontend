@@ -152,7 +152,12 @@ const Sidebar = ({ open, handleDrawerClose, isLoggedIn, role, setIsLoggedIn, set
           <ListItemText primary="Paid Customer" />
         </ListItemButton>
       </ListItem>
-
+  <ListItem>
+        <ListItemButton onClick={() => handleNavigate('/userconsent')}>
+          <ListItemIcon><PersonAddIcon sx={{ color: 'white' }} /></ListItemIcon>
+          <ListItemText primary="User Consent" />
+        </ListItemButton>
+      </ListItem>
 
 
       <ListItem>
@@ -176,20 +181,9 @@ const Sidebar = ({ open, handleDrawerClose, isLoggedIn, role, setIsLoggedIn, set
         </ListItemButton>
       </ListItem>
 
-      <ListItem>
-        <ListItemButton onClick={() => handleNavigate('/qualityAndComplaince')}>
-          <ListItemIcon><LibraryAddCheckIcon sx={{ color: 'white' }} /></ListItemIcon>
-          <ListItemText primary="Quality And Compliance" />
-        </ListItemButton>
-      </ListItem>
 
 
-      <ListItem>
-        <ListItemButton onClick={() => handleNavigate('/dashboard')}>
-          <ListItemIcon><DashboardIcon sx={{ color: 'white' }} /></ListItemIcon>
-          <ListItemText primary="Dashboard" />
-        </ListItemButton>
-      </ListItem>
+
 
       <ListItem>
         <ListItemButton onClick={() => handleNavigate('/leads')}>
@@ -198,20 +192,10 @@ const Sidebar = ({ open, handleDrawerClose, isLoggedIn, role, setIsLoggedIn, set
         </ListItemButton>
       </ListItem>
 
-      <ListItem>
-        <ListItemButton onClick={() => handleNavigate('/paidCustomer')}>
-          <ListItemIcon><AccountBoxIcon sx={{ color: 'white' }} /></ListItemIcon>
-          <ListItemText primary="Paid Customer" />
-        </ListItemButton>
-      </ListItem>
+      
 
 
-      <ListItem>
-        <ListItemButton onClick={() => handleNavigate('/userconsent')}>
-          <ListItemIcon><PersonAddIcon sx={{ color: 'white' }} /></ListItemIcon>
-          <ListItemText primary="User Consent" />
-        </ListItemButton>
-      </ListItem>
+    
 
   
 
@@ -222,12 +206,7 @@ const Sidebar = ({ open, handleDrawerClose, isLoggedIn, role, setIsLoggedIn, set
         </ListItemButton>
       </ListItem>
 
-      <ListItem>
-        <ListItemButton onClick={() => handleNavigate('/salesAgentwise')}>
-          <ListItemIcon><Diversity3Icon sx={{ color: 'white' }} /></ListItemIcon>
-          <ListItemText primary="Sales Agentwise" />
-        </ListItemButton>
-      </ListItem>
+
 
       <ListItem>
         <ListItemButton onClick={() => handleNavigate('/qualityAndComplaince')}>
