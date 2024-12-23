@@ -95,11 +95,11 @@ function FollowUp({ token }) {
 
     const tokens = localStorage.getItem('token');
 
-    axios.put(`https://fandoexpert1.onrender.com/api/updatelead/${selectedLead.id}`, updatedLead, {
-      headers: {
-        Authorization: `Bearer ${tokens}`,
-      },
-    })
+   axios.put(`https://fandoexpert1.onrender.com/api/updatelead/${selectedLead.id}`, updatedLead, {
+  headers: {
+    Authorization: `Bearer ${tokens}`,
+  },
+})
     .then((response) => {
       console.log('Lead updated successfully:', response.data);
       setOpen(false);
