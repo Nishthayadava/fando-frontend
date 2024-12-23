@@ -8,7 +8,7 @@ const SalesAgentwise = () => {
   useEffect(() => {
     const fetchSalesData = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/get-sales');
+        const response = await axios.get('https://fandoexpert1.onrender.com/api/get-sales');
         
         // Sort data by sales in descending order and set rank based on position
         const sortedData = response.data
