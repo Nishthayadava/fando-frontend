@@ -30,7 +30,7 @@ function AssignAgent({ token }) {
       });
 
     axios
-      .get('https://fandoexpert1.onrender.com/api/get-users', {
+      .get('https://fandoexpert1.onrender.com/get-users', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
