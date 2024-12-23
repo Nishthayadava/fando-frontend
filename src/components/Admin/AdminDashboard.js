@@ -14,11 +14,18 @@ const AdminDashboard = () => {
         const token = localStorage.getItem('token');
         try {
             const response = await axios.get('https://fandoexpert1.onrender.com/api/admin/attendance', {
-                headers: { Authorization: token }
+                headers: { Authorization: `Bearer ${token}` }
             });
             setAttendanceData(response.data);
         } catch (error) {
             console.error('Error fetching attendance data:', error);
+        if (error.response && error.response.status === 401) {
+            // Handle token expiration or invalid token
+            console.log('Token expired or invalid');
+        } else {
+            // Handle other errors
+            console.log('Something went wrong');
+        }
         }
     };
 
