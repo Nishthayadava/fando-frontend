@@ -36,27 +36,38 @@ function LeadsDashboard() {
   useEffect(() => {
     const fetchLeads = async () => {
       try {
-        const token = localStorage.getItem('token');
-        
+        const token = localStorage.getItem('token'); // Get the token from localStorage
+        if (!token) {
+          setError('No token found. Please log in.');
+          setLoading(false);
+          return;
+        }
+  
+        // Include the token in the request headers
         const response = await axios.get('https://fandoexpert1.onrender.com/my-leads', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-       console.log("Fetched Leads:", response.data.leads); // Log the fetched leads
+  
+        console.log("Fetched Leads:", response.data.leads); // Log the fetched leads
         setLeads(response.data.leads);
         setLoading(false);
       } catch (err) {
         console.error("Error fetching leads:", err);
+        // Handle different error statuses
+        if (err.response && err.response.status === 401) {
+          setError('Unauthorized access. Please log in again.');
+        } else {
+          setError('Failed to fetch leads. Please try again later.');
+        }
         setLoading(false);
-        setError('Failed to fetch leads. Please try again later.');
       }
     };
-    
-
+  
     fetchLeads();
   }, []);
-
+  
   // Handle opening modal with the selected lead's data
   const handleEditClick = (lead) => {
     setEditLead(lead);

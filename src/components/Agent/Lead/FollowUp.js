@@ -12,7 +12,6 @@ function FollowUp({ token }) {
   const [editStatus, setEditStatus] = useState(''); // Status being edited
   const [editusers, setEditUsers] = useState(''); // User ID being edited
 
-
   useEffect(() => {
 
     const userIdFromStorage = localStorage.getItem('userId');
@@ -41,8 +40,8 @@ function FollowUp({ token }) {
     { field: 'address', headerName: 'Address', width: 200 },
     { field: 'status', headerName: 'Status', width: 150, editable: true },
     { field: 'remark', headerName: 'Remark', width: 200, editable: true },
-        { field: 'created', headerName: 'Assign Date', width: 200, editable: true },
-        { field: 'updated', headerName: 'Updated Date', width: 200, editable: true },
+    { field: 'created', headerName: 'Assign Date', width: 200, editable: true },
+    { field: 'updated', headerName: 'Updated Date', width: 200, editable: true },
     {
       field: 'action',
       headerName: 'Action',
@@ -87,23 +86,27 @@ function FollowUp({ token }) {
 
   // Save the changes and update the backend
   const handleSaveChanges = () => {
+    console.log('status:', editStatus, 'userids:', editusers, 'leadId:', selectedLead.id);
+  
     const updatedLead = {
       remark: editRemark,  // the new remark value
       status: editStatus,  // the new status value
-      userids: editusers
+      userids: editusers,  // user IDs
     };
-
+  
     const tokens = localStorage.getItem('token');
-
-   axios.put(`https://fandoexpert1.onrender.com/api/updatelead/${selectedLead.id}`, updatedLead, {
-  headers: {
-    Authorization: `Bearer ${tokens}`,
-  },
-})
+  
+    // Make sure the leadId is in the URL path
+    axios.put(`https://fandoexpert1.onrender.com/api/updatelead/${selectedLead.id}`, updatedLead, {
+      headers: {
+        Authorization: `Bearer ${tokens}`,
+      },
+    })
     .then((response) => {
       console.log('Lead updated successfully:', response.data);
       setOpen(false);
-
+  
+      // Update local leads state with the updated lead data
       const updatedLeads = leads.map((lead) => {
         if (lead.id === selectedLead.id) {
           return {
@@ -114,14 +117,14 @@ function FollowUp({ token }) {
         }
         return lead;
       });
-
+  
       setLeads(updatedLeads);
     })
     .catch((error) => {
       console.error('Error updating lead:', error.response?.data || error.message);
     });
   };
-
+  
   return (
     <Box>
       <Typography variant="h6" gutterBottom>
@@ -169,8 +172,6 @@ function FollowUp({ token }) {
             displayEmpty
             margin="normal"
           >
-            {/* <MenuItem value="Pending">Pending</MenuItem>
-            <MenuItem value="Not_Paid">Not Paid</MenuItem> */}
             <MenuItem value="Paid">Paid</MenuItem>
             <MenuItem value="Not Contactable">Not Contactable</MenuItem>
             <MenuItem value="Busy tone">Busy tone</MenuItem>
