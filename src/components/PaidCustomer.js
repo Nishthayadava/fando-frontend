@@ -44,7 +44,7 @@ const PaidCustomer = ({ onStatusChange }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/getData');
+        const response = await axios.get('https://fandoexpert1.onrender.com/getData');
         setSubmittedData(response.data);
       } catch (error) {
         console.error('Error fetching data', error);
@@ -77,7 +77,7 @@ const PaidCustomer = ({ onStatusChange }) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:5000/submit', formData);
+      const response = await axios.post('https://fandoexpert1.onrender.com/submit', formData);
       setSubmittedData((prevData) => [...prevData, response.data]);
       setFormData({
         customer_id: '',
