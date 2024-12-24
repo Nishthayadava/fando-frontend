@@ -1,158 +1,316 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Modal, TextField, Paper } from '@mui/material';
+import {
+  TextField,
+  Button,
+  Grid,
+  Box,
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+} from '@mui/material';
 
-const PaidCustomer = () => {
-  const [customers, setCustomers] = useState([]);
-  const [open, setOpen] = useState(false);
+const PaidCustomer = ({ onStatusChange }) => {
   const [formData, setFormData] = useState({
-    sale_date: '',
     customer_id: '',
+    sale_date: '',
     full_name: '',
     package: '',
     expiry_date: '',
     payment_mode: '',
     total_received: '',
-    company_amount: '',
-    tax: '',
+    gst_amount: 0,
+    company_amount: 0,
     agent: '',
     percentage: '',
-    shared_amount: '',
-    remark: ''
+    shared_amount: 0,
+    remark: '',
   });
-  const [isEditing, setIsEditing] = useState(false);
-  const [editId, setEditId] = useState(null);
-  const [previousAmount, setPreviousAmount] = useState(0); // Store previous amount when editing
+
+  const [submittedData, setSubmittedData] = useState([]);
+  const [openForm, setOpenForm] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetchCustomers();
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/getData');
+        setSubmittedData(response.data);
+      } catch (error) {
+        console.error('Error fetching data', error);
+      }
+    };
+    fetchData();
   }, []);
 
-  const fetchCustomers = async () => {
-    try {
-      const response = await axios.get('https://fandoexpert1.onrender.com/api/paid-customers');
-      setCustomers(response.data);
-    } catch (error) {
-      console.error('Error fetching customers:', error);
-    }
-  };
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => {
+      const newFormData = { ...prev, [name]: value };
 
-  const handleOpen = () => {
-    setOpen(true);
-  };
+      if (name === 'total_received') {
+        const gstAmount = (parseFloat(value) * 18) / 100;
+        const companyAmount = (parseFloat(value) * 82) / 100;
+        newFormData.gst_amount = gstAmount;
+        newFormData.company_amount = companyAmount;
 
-  const handleClose = () => {
-    setOpen(false);
-    resetFormData();
-    setIsEditing(false);
-    setPreviousAmount(0); // Reset previous amount
-  };
-
-  const resetFormData = () => {
-    setFormData({
-      sale_date: '',
-      customer_id: '',
-      full_name: '',
-      package: '',
-      expiry_date: '',
-      payment_mode: '',
-      total_received: '',
-      company_amount: '',
-      tax: '',
-      agent: '',
-      percentage: '',
-      shared_amount: '',
-      remark: ''
+        if (newFormData.percentage) {
+          const sharedAmount = (companyAmount * parseFloat(newFormData.percentage)) / 100;
+          newFormData.shared_amount = sharedAmount;
+        }
+      }
+      return newFormData;
     });
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    let updatedFormData = { ...formData, [name]: value };
-
-    if (name === 'total_received') {
-      const newAmount = parseFloat(value) || 0;
-      const updatedTotalAmount = (previousAmount + newAmount).toFixed(2);
-      const tax = (updatedTotalAmount * 0.18).toFixed(2);  // 18% tax
-      const companyAmount = (updatedTotalAmount * 0.82).toFixed(2);  // 82% company amount
-
-      updatedFormData = {
-        ...updatedFormData,
-        total_received: updatedTotalAmount,
-        tax,
-        company_amount: companyAmount
-      };
-    }
-
-    setFormData(updatedFormData);
-  };
-
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
     try {
-      if (isEditing) {
-        await axios.put(`https://fandoexpert1.onrender.com/api/paid-customers/${editId}`, formData);
-      } else {
-        await axios.post('https://fandoexpert1.onrender.com/api/paid-customers', formData);
-      }
-      fetchCustomers();
-      handleClose();
+      const response = await axios.post('http://localhost:5000/submit', formData);
+      setSubmittedData((prevData) => [...prevData, response.data]);
+      setFormData({
+        customer_id: '',
+        sale_date: '',
+        full_name: '',
+        package: '',
+        expiry_date: '',
+        payment_mode: '',
+        total_received: '',
+        gst_amount: 0,
+        company_amount: 0,
+        agent: '',
+        percentage: '',
+        shared_amount: 0,
+        remark: '',
+      });
+      setOpenForm(false); // Close form after submit
     } catch (error) {
-      console.error('Error saving customer:', error);
+      console.error('Error submitting form', error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleEdit = (customer) => {
-    setFormData(customer);
-    setEditId(customer.id);
-    setIsEditing(true);
-    setPreviousAmount(parseFloat(customer.total_received) || 0); // Set previous amount from existing data
-    handleOpen();
+  const handleOpenForm = () => {
+    setOpenForm(true);
+  };
+
+  const handleCloseForm = () => {
+    setOpenForm(false);
   };
 
   return (
     <div>
-      <Button variant="contained" color="primary" onClick={handleOpen}>
+      <Button variant="contained" color="primary" onClick={handleOpenForm}>
         Add Customer
       </Button>
+
+      <Dialog open={openForm} onClose={handleCloseForm}>
+        <DialogTitle>Add Customer</DialogTitle>
+        <DialogContent>
+          <form onSubmit={handleSubmit}>
+            <Grid container spacing={3}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Customer ID"
+                  name="customer_id"
+                  value={formData.customer_id}
+                  onChange={handleChange}
+                  fullWidth
+                  required
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Sale Date"
+                  name="sale_date"
+                  type="date"
+                  value={formData.sale_date}
+                  onChange={handleChange}
+                  fullWidth
+                  required
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Full Name"
+                  name="full_name"
+                  value={formData.full_name}
+                  onChange={handleChange}
+                  fullWidth
+                  required
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Package"
+                  name="package"
+                  value={formData.package}
+                  onChange={handleChange}
+                  fullWidth
+                  required
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Expiry Date"
+                  name="expiry_date"
+                  type="date"
+                  value={formData.expiry_date}
+                  onChange={handleChange}
+                  fullWidth
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Payment Mode"
+                  name="payment_mode"
+                  value={formData.payment_mode}
+                  onChange={handleChange}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Total Received"
+                  name="total_received"
+                  type="number"
+                  value={formData.total_received}
+                  onChange={handleChange}
+                  fullWidth
+                  required
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="GST Amount (18%)"
+                  name="gst_amount"
+                  value={formData.gst_amount}
+                  disabled
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Company Amount (82%)"
+                  name="company_amount"
+                  value={formData.company_amount}
+                  disabled
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Agent"
+                  name="agent"
+                  value={formData.agent}
+                  onChange={handleChange}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Percentage"
+                  name="percentage"
+                  type="number"
+                  value={formData.percentage}
+                  onChange={handleChange}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Shared Amount"
+                  name="shared_amount"
+                  value={formData.shared_amount}
+                  disabled
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Remark"
+                  name="remark"
+                  value={formData.remark}
+                  onChange={handleChange}
+                  fullWidth
+                />
+              </Grid>
+            </Grid>
+            <DialogActions>
+              <Button onClick={handleCloseForm} color="secondary">
+                Cancel
+              </Button>
+              <Button type="submit" color="primary" disabled={loading}>
+                {loading ? <CircularProgress size={24} /> : 'Submit'}
+              </Button>
+            </DialogActions>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Sale Date</TableCell>
               <TableCell>Customer ID</TableCell>
+              <TableCell>Sale Date</TableCell>
               <TableCell>Full Name</TableCell>
               <TableCell>Package</TableCell>
               <TableCell>Expiry Date</TableCell>
               <TableCell>Payment Mode</TableCell>
-              <TableCell>Amount</TableCell>
-              <TableCell>Tax</TableCell>
+              <TableCell>Total Received</TableCell>
+              <TableCell>GST Amount</TableCell>
               <TableCell>Company Amount</TableCell>
               <TableCell>Agent</TableCell>
               <TableCell>Percentage</TableCell>
               <TableCell>Shared Amount</TableCell>
               <TableCell>Remark</TableCell>
-              <TableCell>Update</TableCell>
+              <TableCell>Status</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {customers.map((customer) => (
-              <TableRow key={customer.id}>
-                <TableCell>{customer.sale_date}</TableCell>
-                <TableCell>{customer.customer_id}</TableCell>
-                <TableCell>{customer.full_name}</TableCell>
-                <TableCell>{customer.package}</TableCell>
-                <TableCell>{customer.expiry_date}</TableCell>
-                <TableCell>{customer.payment_mode}</TableCell>
-                <TableCell>{customer.total_received}</TableCell>
-                <TableCell>{customer.tax}</TableCell>
-                <TableCell>{customer.company_amount}</TableCell>
-                <TableCell>{customer.agent}</TableCell>
-                <TableCell>{customer.percentage}</TableCell>
-                <TableCell>{customer.shared_amount}</TableCell>
-                <TableCell>{customer.remark}</TableCell>
+            {submittedData.map((row) => (
+              <TableRow key={row.id}>
+                <TableCell>{row.customer_id}</TableCell>
+                <TableCell>{new Date(row.sale_date).toLocaleString()}</TableCell> {/* Formatting sale_date */}
+                <TableCell>{row.full_name}</TableCell>
+                <TableCell>{row.package}</TableCell>
+                <TableCell>{new Date(row.expiry_date).toLocaleString()}</TableCell> {/* Formatting expiry_date */}
+                <TableCell>{row.payment_mode}</TableCell>
+                <TableCell>{row.total_received}</TableCell>
+                <TableCell>{row.gst_amount}</TableCell>
+                <TableCell>{row.company_amount}</TableCell>
+                <TableCell>{row.agent}</TableCell>
+                <TableCell>{row.percentage}</TableCell>
+                <TableCell>{row.shared_amount}</TableCell>
+                <TableCell>{row.remark}</TableCell>
                 <TableCell>
-                  <Button variant="contained" color="secondary" onClick={() => handleEdit(customer)}>
-                    Edit
+                  <Button
+                    variant="contained"
+                    color={row.status === 'approved' ? 'success' : 'error'}
+                    disabled={row.status !== 'pending'}
+                    style={{ width: '100px' }}
+                  >
+                    {row.status === 'approved' ? 'Approved' : 'Pending'}
                   </Button>
                 </TableCell>
               </TableRow>
@@ -160,81 +318,8 @@ const PaidCustomer = () => {
           </TableBody>
         </Table>
       </TableContainer>
-
-      <Modal open={open} onClose={handleClose}>
-        <div style={{
-          padding: '20px',
-          backgroundColor: 'white',
-          margin: '100px auto',
-          width: '80%',
-          maxHeight: '80vh',
-          overflowY: 'auto',
-          display: 'flex',
-          flexDirection: 'column'
-        }}>
-          <h2>{isEditing ? 'Edit Customer' : 'Add Customer'}</h2>
-          <TextField
-            name="sale_date"
-            label="Sale Date"
-            type="date"
-            value={formData.sale_date}
-            onChange={handleInputChange}
-            fullWidth
-            margin="normal"
-            InputLabelProps={{ shrink: true }}
-          />
-          <TextField
-            name="total_received"
-            label="Amount"
-            value={formData.total_received}
-            onChange={handleInputChange}
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            name="tax"
-            label="Tax"
-            value={formData.tax}
-            InputProps={{
-              readOnly: true,
-            }}
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            name="company_amount"
-            label="Company Amount"
-            value={formData.company_amount}
-            InputProps={{
-              readOnly: true,
-            }}
-            fullWidth
-            margin="normal"
-          />
-          {/* Additional Fields */}
-          {Object.keys(formData).filter(key => !['sale_date', 'total_received', 'tax', 'company_amount'].includes(key)).map((key) => (
-            <TextField
-              key={key}
-              name={key}
-              label={key.replace(/_/g, ' ')}
-              value={formData[key]}
-              onChange={handleInputChange}
-              fullWidth
-              margin="normal"
-            />
-          ))}
-          <Button variant="contained" color="primary" onClick={handleSubmit}>
-            Submit
-          </Button>
-        </div>
-      </Modal>
     </div>
   );
 };
 
 export default PaidCustomer;
-
-
-// Sale , expiry date, agent name, amount
-// agent options - agent 1, agent 2(login agent)
-// agent 1 - agent 2 - agent 3 - agent 4
