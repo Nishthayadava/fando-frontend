@@ -59,10 +59,16 @@ function UserConsent() {
     entry.phone?.toLowerCase().includes(filter.toLowerCase())
   );
 
+  // Function to mask phone number, showing only last 4 digits
+  const maskPhoneNumber = (phone) => {
+    if (!phone) return '-';
+    return `*******${phone.slice(-4)}`; // Mask all but last 4 digits
+  };
+
   return (
-    <Box sx={{ padding: 4, fontFamily: 'Arial, sans-serif', backgroundColor: '#f9f9f9', minHeight: '100vh' }}>
+    <div sx={{fontFamily: 'Arial, sans-serif', backgroundColor: '#f9f9f9', minHeight: '100vh' }}>
       {/* Quick filter input with search icon */}
-      <Box sx={{ marginBottom: 3 }}>
+      <Box sx={{ marginBottom: 0 }}>
         <TextField
           label="Search"
           variant="outlined"
@@ -111,7 +117,7 @@ function UserConsent() {
                 <TableRow key={index}>
                   <TableCell align="center">{entry.name || '-'}</TableCell>
                   <TableCell align="center">{entry.email || '-'}</TableCell>
-                  <TableCell align="center">{entry.phone || '-'}</TableCell>
+                  <TableCell align="center">{maskPhoneNumber(entry.phone)}</TableCell> {/* Masked phone number */}
                   <TableCell align="center">
                     <Button
                       variant="contained"
@@ -132,7 +138,7 @@ function UserConsent() {
           </Table>
         </TableContainer>
       )}
-    </Box>
+    </div>
   );
 }
 
