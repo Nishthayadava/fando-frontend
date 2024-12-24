@@ -45,12 +45,10 @@ const Sidebar = ({ open, handleDrawerClose, isLoggedIn, role, setIsLoggedIn, set
     const token = localStorage.getItem('token');
     if (token) {
       const userId = localStorage.getItem('userId');
+      console.log("tokeen",userId);
+
       axios
-        .get(`https://fandoexpert1.onrender.com/api/getuserprofile/${userId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
+        .get(`https://fandoexpert1.onrender.com/api/getuserprofile/${userId}`)
         .then((response) => {
           const { name, role } = response.data;
           setUserProfile({ name, role });
@@ -58,7 +56,10 @@ const Sidebar = ({ open, handleDrawerClose, isLoggedIn, role, setIsLoggedIn, set
         .catch((error) => {
           console.error('Error fetching user profile:', error);
         });
-    }
+      } else {
+        console.log('No token found, user is not authenticated.');
+      }
+    
   }, [isLoggedIn]); // Fetch profile when login status changes
 
   const handleNavigate = (route) => {
