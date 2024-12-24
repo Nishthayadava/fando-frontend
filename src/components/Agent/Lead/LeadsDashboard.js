@@ -38,13 +38,13 @@ function LeadsDashboard() {
       try {
         const token = localStorage.getItem('token');
         
-        const response = await axios.get('https://fandoexpert1.onrender.com/api/my-leads', {
+        const response = await axios.get('https://fandoexpert1.onrender.com/my-leads', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-       console.log("Fetched Leads:", response.data.agents); // Log the fetched leads
-        setLeads(response.data.agents);
+       console.log("Fetched Leads:", response.data.leads); // Log the fetched leads
+        setLeads(response.data.leads);
         setLoading(false);
       } catch (err) {
         console.error("Error fetching leads:", err);
@@ -89,7 +89,7 @@ function LeadsDashboard() {
       const roless = localStorage.getItem('role');
 
       const response = await axios.patch(
-        'https://fandoexpert1.onrender.com/api/update-lead-status',
+        'https://fandoexpert1.onrender.com/update-lead-status',
         {
           leadId: editLead.id,
           newStatus: editLead.status,
