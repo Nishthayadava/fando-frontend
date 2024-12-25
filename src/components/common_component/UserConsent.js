@@ -15,7 +15,8 @@ import {
   TextField,
   InputAdornment,
 } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';  // Import the search icon
+import SearchIcon from '@mui/icons-material/Search'; // Import the search icon
+import dayjs from 'dayjs'; // Install dayjs for date formatting (`npm install dayjs`)
 
 // Replace with your backend URL
 const socket = io('https://webhook-api-rw66.onrender.com');
@@ -30,8 +31,12 @@ function UserConsent() {
       try {
         const response = await fetch('https://webhook-api-rw66.onrender.com/api/webhook-data');
         const data = await response.json();
-        setWebhookData(data); // Set the data received from the backend
-        console.log('Initial data fetched:', data);
+        const enrichedData = data.map((entry) => ({
+          ...entry,
+          receivedAt: dayjs().format('YYYY-MM-DD - HH:mm:ss'), // Add current date and time
+        }));
+        setWebhookData(enrichedData); // Set the enriched data
+        console.log('Initial data fetched:', enrichedData);
       } catch (error) {
         console.error('Error fetching initial data:', error);
       }
@@ -42,8 +47,11 @@ function UserConsent() {
     // Listen for real-time updates from the backend
     socket.on('update', (data) => {
       console.log('Data received:', data);
-      setWebhookData(data); // Update state with new data
-      return data;
+      const enrichedData = data.map((entry) => ({
+        ...entry,
+        receivedAt: dayjs().format('YYYY-MM-DD HH:mm:ss'), // Add current date and time
+      }));
+      setWebhookData(enrichedData); // Update state with enriched data
     });
 
     // Cleanup on unmount
@@ -65,8 +73,29 @@ function UserConsent() {
     return `*******${phone.slice(-4)}`; // Mask all but last 4 digits
   };
 
+  // Function to highlight the filter keyword in the text
+  const highlightText = (text) => {
+    if (!text) return text;
+    const regex = new RegExp(`(${filter})`, 'gi'); // Case-insensitive match for the filter
+    return text.split(regex).map((part, index) =>
+      part.toLowerCase() === filter.toLowerCase() ? (
+        <span key={index} style={{ backgroundColor: 'yellow', fontWeight: 'bold' }}>
+          {part}
+        </span>
+      ) : (
+        part
+      )
+    );
+  };
+
   return (
-    <div sx={{fontFamily: 'Arial, sans-serif', backgroundColor: '#f9f9f9', minHeight: '100vh' }}>
+    <div
+      style={{
+        fontFamily: 'Arial, sans-serif',
+        backgroundColor: '#f9f9f9',
+        minHeight: '100vh',
+      }}
+    >
       {/* Quick filter input with search icon */}
       <Box sx={{ marginBottom: 0 }}>
         <TextField
@@ -79,7 +108,7 @@ function UserConsent() {
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <SearchIcon />  {/* Add search icon */}
+                <SearchIcon /> {/* Add search icon */}
               </InputAdornment>
             ),
           }}
@@ -90,7 +119,7 @@ function UserConsent() {
         <Box display="flex" justifyContent="center" alignItems="center" height="60vh">
           <CircularProgress />
           <Typography variant="h6" sx={{ ml: 2 }}>
-            Waiting for data...
+            No matches Found
           </Typography>
         </Box>
       ) : (
@@ -98,6 +127,9 @@ function UserConsent() {
           <Table>
             <TableHead>
               <TableRow>
+                <TableCell align="center" sx={{ fontWeight: 'bold' }}>
+                  Date & Time
+                </TableCell>
                 <TableCell align="center" sx={{ fontWeight: 'bold' }}>
                   Name
                 </TableCell>
@@ -115,9 +147,10 @@ function UserConsent() {
             <TableBody>
               {filteredData.map((entry, index) => (
                 <TableRow key={index}>
-                  <TableCell align="center">{entry.name || '-'}</TableCell>
-                  <TableCell align="center">{entry.email || '-'}</TableCell>
-                  <TableCell align="center">{maskPhoneNumber(entry.phone)}</TableCell> {/* Masked phone number */}
+                  <TableCell align="center">{entry.receivedAt || '-'}</TableCell> {/* Display receivedAt */}
+                  <TableCell align="center">{highlightText(entry.name) || '-'}</TableCell>
+                  <TableCell align="center">{highlightText(entry.email) || '-'}</TableCell>
+                  <TableCell align="center">{highlightText(maskPhoneNumber(entry.phone))}</TableCell>
                   <TableCell align="center">
                     <Button
                       variant="contained"
