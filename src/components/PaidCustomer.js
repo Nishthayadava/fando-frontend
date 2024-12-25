@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import {
   TextField,
   Button,
@@ -18,11 +17,16 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+  Chip,
 } from '@mui/material';
 
 const PaidCustomer = ({ onStatusChange }) => {
   const [formData, setFormData] = useState({
-    customer_id: '',
+    email: '',
     sale_date: '',
     full_name: '',
     package: '',
@@ -31,27 +35,16 @@ const PaidCustomer = ({ onStatusChange }) => {
     total_received: '',
     gst_amount: 0,
     company_amount: 0,
-    agent: '',
-    percentage: '',
-    shared_amount: 0,
+    agents: [],
+    agentPercentages: {},
+    shared_amounts: {},
     remark: '',
   });
 
   const [submittedData, setSubmittedData] = useState([]);
   const [openForm, setOpenForm] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get('https://fandoexpert1.onrender.com/getData');
-        setSubmittedData(response.data);
-      } catch (error) {
-        console.error('Error fetching data', error);
-      }
-    };
-    fetchData();
-  }, []);
+  const [agentList, setAgentList] = useState(['Agent A', 'Agent B', 'Agent C']);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -64,23 +57,45 @@ const PaidCustomer = ({ onStatusChange }) => {
         newFormData.gst_amount = gstAmount;
         newFormData.company_amount = companyAmount;
 
-        if (newFormData.percentage) {
-          const sharedAmount = (companyAmount * parseFloat(newFormData.percentage)) / 100;
-          newFormData.shared_amount = sharedAmount;
-        }
+        let newSharedAmounts = {};
+        Object.keys(newFormData.agentPercentages).forEach((agent) => {
+          const percentage = newFormData.agentPercentages[agent];
+          const sharedAmount = (companyAmount * percentage) / 100;
+          newSharedAmounts[agent] = sharedAmount;
+        });
+        newFormData.shared_amounts = newSharedAmounts;
       }
+
       return newFormData;
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleAgentPercentageChange = (e, agent) => {
+    const { value } = e.target;
+    setFormData((prev) => {
+      const newFormData = { ...prev };
+      newFormData.agentPercentages[agent] = parseFloat(value);
+
+      const companyAmount = newFormData.company_amount;
+      let newSharedAmounts = { ...newFormData.shared_amounts };
+      const sharedAmount = (companyAmount * parseFloat(value)) / 100;
+      newSharedAmounts[agent] = sharedAmount;
+      newFormData.shared_amounts = newSharedAmounts;
+
+      return newFormData;
+    });
+  };
+
+  const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post('https://fandoexpert1.onrender.com/submit', formData);
-      setSubmittedData((prevData) => [...prevData, response.data]);
+      // Store the form data locally in the submittedData state
+      setSubmittedData((prevData) => [...prevData, formData]);
+
+      // Clear form fields after submission
       setFormData({
-        customer_id: '',
+        email: '',
         sale_date: '',
         full_name: '',
         package: '',
@@ -89,11 +104,12 @@ const PaidCustomer = ({ onStatusChange }) => {
         total_received: '',
         gst_amount: 0,
         company_amount: 0,
-        agent: '',
-        percentage: '',
-        shared_amount: 0,
+        agents: [],
+        agentPercentages: {},
+        shared_amounts: {},
         remark: '',
       });
+
       setOpenForm(false); // Close form after submit
     } catch (error) {
       console.error('Error submitting form', error);
@@ -121,17 +137,48 @@ const PaidCustomer = ({ onStatusChange }) => {
         <DialogContent>
           <form onSubmit={handleSubmit}>
             <Grid container spacing={3}>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={4}>
                 <TextField
-                  label="Customer ID"
-                  name="customer_id"
-                  value={formData.customer_id}
+                  label="Full Name"
+                  name="full_name"
+                  value={formData.full_name}
                   onChange={handleChange}
                   fullWidth
                   required
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={4}>
+                <TextField
+                  label="Contact Number"
+                  name="contact-number"
+                  value={formData.contact}
+                  onChange={handleChange}
+                  fullWidth
+                  required
+                />
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <TextField
+                  label="Email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  fullWidth
+                  required
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={4}>
+                <TextField
+                  label="Package"
+                  name="package"
+                  value={formData.package}
+                  onChange={handleChange}
+                  fullWidth
+                  required
+                />
+              </Grid>
+              <Grid item xs={12} sm={4}>
                 <TextField
                   label="Sale Date"
                   name="sale_date"
@@ -145,27 +192,7 @@ const PaidCustomer = ({ onStatusChange }) => {
                   }}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  label="Full Name"
-                  name="full_name"
-                  value={formData.full_name}
-                  onChange={handleChange}
-                  fullWidth
-                  required
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  label="Package"
-                  name="package"
-                  value={formData.package}
-                  onChange={handleChange}
-                  fullWidth
-                  required
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={4}>
                 <TextField
                   label="Expiry Date"
                   name="expiry_date"
@@ -178,7 +205,7 @@ const PaidCustomer = ({ onStatusChange }) => {
                   }}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={4}>
                 <TextField
                   label="Payment Mode"
                   name="payment_mode"
@@ -187,7 +214,7 @@ const PaidCustomer = ({ onStatusChange }) => {
                   fullWidth
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={4}>
                 <TextField
                   label="Total Received"
                   name="total_received"
@@ -198,7 +225,7 @@ const PaidCustomer = ({ onStatusChange }) => {
                   required
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={4}>
                 <TextField
                   label="GST Amount (18%)"
                   name="gst_amount"
@@ -207,7 +234,7 @@ const PaidCustomer = ({ onStatusChange }) => {
                   fullWidth
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={4}>
                 <TextField
                   label="Company Amount (82%)"
                   name="company_amount"
@@ -216,35 +243,42 @@ const PaidCustomer = ({ onStatusChange }) => {
                   fullWidth
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  label="Agent"
-                  name="agent"
-                  value={formData.agent}
-                  onChange={handleChange}
-                  fullWidth
-                />
+              <Grid item xs={12} sm={4}>
+                <FormControl fullWidth>
+                  <InputLabel>Agents</InputLabel>
+                  <Select
+                    multiple
+                    value={formData.agents}
+                    onChange={(e) => setFormData({ ...formData, agents: e.target.value })}
+                    renderValue={(selected) => (
+                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                        {selected.map((value) => (
+                          <Chip key={value} label={value} />
+                        ))}
+                      </Box>
+                    )}
+                  >
+                    {agentList.map((agent) => (
+                      <MenuItem key={agent} value={agent}>
+                        {agent}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  label="Percentage"
-                  name="percentage"
-                  type="number"
-                  value={formData.percentage}
-                  onChange={handleChange}
-                  fullWidth
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  label="Shared Amount"
-                  name="shared_amount"
-                  value={formData.shared_amount}
-                  disabled
-                  fullWidth
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
+              {formData.agents.map((agent) => (
+                <Grid item xs={12} sm={4} key={agent}>
+                  <TextField
+                    label={`Percentage for ${agent}`}
+                    name={`percentage_${agent}`}
+                    type="number"
+                    value={formData.agentPercentages[agent] || ''}
+                    onChange={(e) => handleAgentPercentageChange(e, agent)}
+                    fullWidth
+                  />
+                </Grid>
+              ))}
+              <Grid item xs={12} sm={4}>
                 <TextField
                   label="Remark"
                   name="remark"
@@ -266,21 +300,22 @@ const PaidCustomer = ({ onStatusChange }) => {
         </DialogContent>
       </Dialog>
 
-      
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Customer ID</TableCell>
-              <TableCell>Sale Date</TableCell>
               <TableCell>Full Name</TableCell>
+              <TableCell>Email</TableCell>
+              <TableCell>Phone</TableCell>
+              <TableCell>Sale Date</TableCell>
+              
               <TableCell>Package</TableCell>
               <TableCell>Expiry Date</TableCell>
               <TableCell>Payment Mode</TableCell>
               <TableCell>Total Received</TableCell>
               <TableCell>GST Amount</TableCell>
               <TableCell>Company Amount</TableCell>
-              <TableCell>Agent</TableCell>
+              <TableCell>Agents</TableCell>
               <TableCell>Percentage</TableCell>
               <TableCell>Shared Amount</TableCell>
               <TableCell>Remark</TableCell>
@@ -288,29 +323,30 @@ const PaidCustomer = ({ onStatusChange }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {submittedData.map((row) => (
-              <TableRow key={row.id}>
-                <TableCell>{row.customer_id}</TableCell>
-                <TableCell>{new Date(row.sale_date).toLocaleString()}</TableCell> {/* Formatting sale_date */}
+            {submittedData.map((row, index) => (
+              <TableRow key={index}>
                 <TableCell>{row.full_name}</TableCell>
+                <TableCell>{row.email}</TableCell>
+                <TableCell>{row.phone}</TableCell>
+                <TableCell>{new Date(row.sale_date).toLocaleString()}</TableCell>
+                
                 <TableCell>{row.package}</TableCell>
-                <TableCell>{new Date(row.expiry_date).toLocaleString()}</TableCell> {/* Formatting expiry_date */}
+                <TableCell>{new Date(row.expiry_date).toLocaleString()}</TableCell>
                 <TableCell>{row.payment_mode}</TableCell>
                 <TableCell>{row.total_received}</TableCell>
                 <TableCell>{row.gst_amount}</TableCell>
                 <TableCell>{row.company_amount}</TableCell>
-                <TableCell>{row.agent}</TableCell>
-                <TableCell>{row.percentage}</TableCell>
-                <TableCell>{row.shared_amount}</TableCell>
+                <TableCell>{row.agents.join(', ')}</TableCell>
+                <TableCell>{Object.values(row.agentPercentages).join(', ')}</TableCell>
+                <TableCell>{Object.values(row.shared_amounts).join(', ')}</TableCell>
                 <TableCell>{row.remark}</TableCell>
                 <TableCell>
                   <Button
                     variant="contained"
-                    color={row.status === 'approved' ? 'success' : 'error'}
-                    disabled={row.status !== 'pending'}
-                    style={{ width: '100px' }}
+                    color="secondary"
+                    onClick={() => onStatusChange(row.email, 'completed')}
                   >
-                    {row.status === 'approved' ? 'Approved' : 'Pending'}
+                    Edit
                   </Button>
                 </TableCell>
               </TableRow>
